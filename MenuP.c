@@ -4,7 +4,7 @@
 //BARCOS:
 bar_vect cargar_barcos () {
 	char filename[] = "Barcos.txt";
-	int num_bar = 0;						//Número de barcos registrados
+	int num_tipo_bar = 0;					//Número de barcos registrados
 	int i = 0;
 	char cad_linea[250];					//Caracteres máximos que puede ocupar una linea en fichero
 	int campo_barcos;						//Entero que verifica nº campos de la estructura barcos
@@ -29,17 +29,17 @@ bar_vect cargar_barcos () {
 		fclose (f_bar);
 	}
 	
-	while (fgets (cad_linea, sizeof(cad_linea), f_bar)) {	//Contador de barcos en el programa a partir de fichero
-		num_bar++;
+	while (fgets (cad_linea, sizeof(cad_linea), f_bar)) {		//Contador de barcos en el programa a partir de fichero
+		num_tipo_bar++;
 	}
 	
 	rewind (f_bar);
 	
 	bar_vect b;
 	
-	b.num_bar = num_bar;
+	b.num_tipo_bar = num_tipo_bar;
 	
-	b.bar = (barcos*)malloc(b.num_bar*sizeof(barcos));		//Asignación de memoria dinámica "b.bar[num_bar]"
+	b.bar = (barcos*)malloc(b.num_tipo_bar*sizeof(barcos));		//Asignación de memoria dinámica "b.bar[num_bar]"
 	
 	if (b.bar == NULL) {
 		printf ("No se ha podido reservar memoria suficiente\n");
@@ -48,7 +48,7 @@ bar_vect cargar_barcos () {
 	}
 	
 	//BUCLE PARA RELLENAR LA ESTRUCTURA DE BARCOS//
-	while (fgets (cad_linea, sizeof(cad_linea), f_bar) && i < num_bar) {
+	while (fgets (cad_linea, sizeof(cad_linea), f_bar) && i < num_tipo_bar) {
 		campo_barcos = sscanf (cad_linea, "%21[^-]-%2[^-]-%d",
 		b.bar[i].nomb_barco,
 		b.bar[i].id_barco,
@@ -82,7 +82,7 @@ void guardar_barcos (bar_vect b) {
 	}
 	
 	//PROCESO DE GUARDADO DE DATOS DE CADA BARCO EN FICHERO//
-	for (i = 0; i < b.num_bar; i++) {
+	for (i = 0; i < b.num_tipo_bar; i++) {
 		fprintf (f_bar, "%s-%s-%d\n",
 		b.bar[i].nomb_barco,
 		b.bar[i].id_barco,
@@ -93,7 +93,7 @@ void guardar_barcos (bar_vect b) {
 }
 
 //JUGADORES:
-jug_vect cargar_jugadores () {
+/*jug_vect cargar_jugadores () {
 	char filename[] = "Jugadores.txt";
 	int num_jug = 0;								//Número de jugadores registrados
 	int i = 0;
@@ -186,9 +186,7 @@ void guardar_jugadores (jug_vect j) {
 	
 	fclose (f_jug);
 }
-
-
-
+*/
 
 
 

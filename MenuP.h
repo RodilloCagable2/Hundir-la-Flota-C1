@@ -1,3 +1,19 @@
+/*
+int i, N;
+int **mat;
+
+mat = (int**)malloc(N * sizeof(int*));
+
+for (i = 0; i < N; i++) {
+	mat[i] = (int*)malloc(N * sizeof(int));
+}
+
+for (i = 0; i < N; i++) {
+	free(mat[i]);
+}
+free(mat);
+*/
+
 #ifndef MENUP_H_
 #define MENUP_H_
 
@@ -10,25 +26,22 @@ typedef struct {
 	char nomb_barco[21];	//Nombre del barco
 	char id_barco;			//Identificador del barco
 	int tam_barco;			//Tamaño del barco
+	int num_bar_tipo;
 }barcos;
 
 typedef struct {
 	barcos *bar;
-	int num_bar;
+	int num_tipo_bar;
 }bar_vect;
 
 typedef struct {
-	int id_jugador;			//Índice del jugador
 	char nomb_jugador[21];	//Nombre del jugador
-	char tipo_disp;			//Tipo de disparo (manual o automático)
-	int num_disp;			//Número de disparos realizados por el jugador
-	int ganador;			//Indicador que informa si el jugador ha sido el ganador en la última ronda
-}jugadores;
-
-typedef struct {
-	jugadores *jug;
-	int num_jug;
-}jug_vect;
+	char tipo_disp;			//Tipo de disparo (Automático/Manual)
+	int tam_tablero;		//Valor n que representa los tamaños de los tableros
+	int num_tipo_bar;		//Tipo de barcos a utilizar
+	int num_bar_tipo;		//Número de unidades de cada tipo de barco que conformarán la flota
+	char jugador_com[21];	//Jugador que comienza la partida
+}juego;
 
 //---> BARCOS: <---
 //PRECONDICIÓN: Ninguna
@@ -39,13 +52,13 @@ bar_vect cargar_barcos ();
 //POSCONDICIÓN: Vuelca datos en el fichero pero no devuelve nada
 void guardar_barcos (bar_vect);
 
-//---> JUGADORES: <---
+//---> JUEGO: <---
 //PRECONDICIÓN: Ninguna
 //POSCONDICIÓN: Inicializa una estructura tipo jug_vect con datos almacenados de un fichero
-jug_vect cargar_jugadores ();
+juego cargar_datajuego ();
 
 //PRECONDICIÓN: Se le pasa una estructura tipo jug_vect
 //POSCONDICIÓN: Vuelca datos en el fichero pero no devuelve nada
-void guardar_jugadores (jug_vect);
+void guardar_datajuego (juego);
 
 #endif
