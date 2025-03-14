@@ -4,7 +4,7 @@
 //BARCOS:
 bar_vect cargar_barcos () {
 	char filename[] = "Barcos.txt";
-	int num_tipo_bar = 0;					//Número de barcos registrados
+	int num_tipo_bar = 0;					//Número de tipos de barcos registrados
 	int i = 0;
 	char cad_linea[250];					//Caracteres máximos que puede ocupar una linea en fichero
 	int campo_barcos;						//Entero que verifica nº campos de la estructura barcos
