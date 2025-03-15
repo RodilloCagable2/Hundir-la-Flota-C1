@@ -93,100 +93,62 @@ void guardar_barcos (bar_vect b) {
 }
 
 //JUGADORES:
-/*jug_vect cargar_jugadores () {
-	char filename[] = "Jugadores.txt";
-	int num_jug = 0;								//Número de jugadores registrados
-	int i = 0;
+juego cargar_datajuego () {
+	char filename[] = "Juego.txt";
 	char cad_linea[250];							//Caracteres máximos que puede ocupar una linea en fichero
-	int campo_jugadores;							//Entero que verifica nº campos de la estructura jugadores
-	char default_jug[] = "0-defaultname-A-000-0";	//Creación de un jugador estandar que ocupará la posición 0 del fichero
+	char default_jue[] = "0-0-0\nA-0\n\n0-Defaultname-0-A-0\n---\n---\n---\n\n---\n---\n---\n\n0-Defaultname-0-A-0\n---\n---\n---\n\n---\n---\n---";	//Creación de un juego estandar
 	
-	FILE *f_jug;
+	FILE *f_jue;
 	
-	f_jug = fopen (filename, "r");
+	f_jue = fopen (filename, "r");
 	
-	if (f_jug == NULL) {
-		f_jug = fopen (filename, "w");				//Excepción si no encuentra fichero
-		fclose (f_jug);
-		printf ("No se pudo abrir el archivo de jugadores. Se ha creado un nuevo archivo\n");
+	if (f_jue == NULL) {
+		f_jue = fopen (filename, "w");				//Excepción si no encuentra fichero
+		fclose (f_jue);
+		printf ("No se pudo abrir el archivo de juego. Se ha creado un nuevo archivo\n");
 		getchar ();
 	}
 	
-	rewind (f_jug);									//Necesario para volver a leer el fichero
+	rewind (f_jue);									//Necesario para volver a leer el fichero
 	
-	if (fgetc(f_jug) == EOF) {						//Si fichero vacío, añadimos jugador predeterminado
-		f_jug = fopen (filename, "w");
-		fprintf (f_jug, default_jug);
-		fclose (f_jug);
+	if (fgetc(f_jue) == EOF) {						//Si fichero vacío, añadimos juego predeterminado
+		f_jue = fopen (filename, "w");
+		fprintf (f_jue, default_jue);
+		fclose (f_jue);
 	}
 	
-	while (fgets (cad_linea, sizeof(cad_linea), f_jug)) {		//Contador de jugadores en el programa a partir de fichero
-		num_jug++;
-	}
+	rewind (f_jue);
 	
-	rewind (f_jug);
-	
-	jug_vect j;
-	
-	j.num_jug = num_jug;
-	
-	j.jug = (jugadores*)malloc(j.num_jug*sizeof(jugadores));	//Asignación de memoria dinámica "j.jug[num_jug]"
-	
-	if (j.jug == NULL) {
-		printf ("No se ha podido reservar memoria suficiente\n");
-		getchar ();
-		exit (1);
-	}
+	juego j;
 	
 	//BUCLE PARA RELLENAR LA ESTRUCTURA DE JUGADORES//
-	while (fgets (cad_linea, sizeof(cad_linea), f_jug) && i < num_jug) {
-		campo_jugadores = sscanf (cad_linea, "%d-%21[^-]-%2[^-]-%d-%d",
-		&j.jug[i].id_jugador,
-		j.jug[i].nomb_jugador,
-		j.jug[i].tipo_disp,
-		&j.jug[i].num_disp,
-		&j.jug[i].ganador);
+	while (fgets (cad_linea, sizeof(cad_linea), f_jue)) {
 		
-		if (campo_jugadores != 5) {								//Excepción si fallo en dato de jugador			
-			printf ("Se produjo un error con los datos de un jugador. ID_jugador: %d\n", i + 1);
-			getchar ();
-			exit (EXIT_FAILURE);
-		}
-		
-		i++;
 	}
 	
-	fclose (f_jug);
+	fclose (f_jue);
 	
 	return j;
 }
 
-void guardar_jugadores (jug_vect j) {
+void guardar_datajuego (juego j) {
 	int i;
 	
-	FILE *f_jug;
-	char filename[] = "Jugadores.txt";
-	f_jug = fopen (filename, "w");
+	FILE *f_jue;
+	char filename[] = "Juego.txt";
+	f_jue = fopen (filename, "w");
 	
-	if (f_jug == NULL) {
+	if (f_jue == NULL) {
 		perror ("\nHa ocurrido un error, intentelo de nuevo");
 		getchar ();
 		exit (EXIT_FAILURE);
 	}
 	
-	//PROCESO DE GUARDADO DE DATOS DE CADA JUGADOR EN FICHERO//
-	for (i = 0; i < j.num_jug; i++) {
-		fprintf (f_jug, "%d-%s-%s-%03d-%d\n",
-		j.jug[i].id_jugador,
-		j.jug[i].nomb_jugador,
-		j.jug[i].tipo_disp,
-		j.jug[i].num_disp,
-		j.jug[i].ganador);
-	}
+	//PROCESO DE GUARDADO DE DATOS EN FICHERO//
 	
-	fclose (f_jug);
+	
+	fclose (f_jue);
 }
-*/
 
 
 
