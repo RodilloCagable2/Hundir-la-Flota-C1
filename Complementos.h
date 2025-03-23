@@ -11,11 +11,11 @@ void titulo ();
 
 //PRECONDICIÓN: Se le pasa una cadena
 //POSCONDICIÓN: Se le cambia el caracter salto de linea por terminador
-void terminador_cad (char []);
+void terminador_cad (char *);
 
 //PRECONDICIÓN: Ninguna
 //POSCONDICIÓN: Devuelve un caracter para respuestas si/no
-char confirmacon ();
+void confirmacion (char *);
 
 //PRECONDICIÓN: Ninguna
 //POSCONDICIÓN: Devuelve siempre un número entero
