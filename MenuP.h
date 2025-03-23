@@ -54,7 +54,7 @@ typedef struct {
 	int num_tipo_bar;		//Número de tipos de barco a utilizar
 	int *num_bar_tipo;		//Número de unidades de cada tipo de barco que conformarán la flota
 	int num_total_bar;		//Número total de barcos que conformarán la flota
-	char jugador_com[21];	//Jugador que comienza la partida
+	int comienza;			//Jugador que comienza la partida
 }juego;
 
 //---> BARCOS: <---
@@ -74,5 +74,7 @@ juego cargar_datajuego (bar_vect, jug_vect);
 //PRECONDICIÓN: Se le pasa una estructura tipo jug_vect
 //POSCONDICIÓN: Vuelca datos en el fichero pero no devuelve nada
 void guardar_datajuego (juego, bar_vect, jug_vect);
+
+void menu_principal ();
 
 #endif

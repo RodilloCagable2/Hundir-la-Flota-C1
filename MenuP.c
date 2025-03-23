@@ -1,29 +1,29 @@
 #include "MenuP.h"
-#include "complementos.h"
+#include "Complementos.h"
 
 //BARCOS:
 bar_vect cargar_barcos () {
 	char filename[] = "Barcos.txt";
-	int num_tipo_bar = 0;					//Número de tipos de barcos registrados
-	int i;
-	char cad_linea[250];					//Caracteres máximos que puede ocupar una linea en fichero
-	int campo_barcos = 0;					//Entero que verifica nº campos de la estructura barcos
-	char default_bar[] = "Defaultname-D-0";	//Creación de un barco estandar que ocupará la posición 0 del fichero
+	int num_tipo_bar = 0;						//Número de tipos de barcos registrados
+	int i = 0;
+	char cad_linea[250];						//Caracteres máximos que puede ocupar una linea en fichero
+	int campo_barcos = 0;						//Entero que verifica nº campos de la estructura barcos
+	char default_bar[] = "Defaultname-D-0";		//Creación de un barco estandar que ocupará la posición 0 del fichero
 	
 	FILE *f_bar;
 	
 	f_bar = fopen (filename, "r");
 	
 	if (f_bar == NULL) {
-		f_bar = fopen (filename, "w");		//Excepción si no encuentra fichero
+		f_bar = fopen (filename, "w");			//Excepción si no encuentra fichero
 		fclose (f_bar);
 		perror ("No se pudo abrir el archivo de barcos. Se ha creado un nuevo archivo\n");
 		getchar ();
 	}
 	
-	rewind (f_bar);							//Necesario para volver a leer el fichero
+	rewind (f_bar);								//Necesario para volver a leer el fichero
 	
-	if (fgetc(f_bar) == EOF) {				//Si fichero vacío, añadimos barco predeterminado
+	if (fgetc(f_bar) == EOF) {					//Si fichero vacío, añadimos barco predeterminado
 		f_bar = fopen (filename, "w");
 		fprintf (f_bar, default_bar);
 		fclose (f_bar);
@@ -49,9 +49,9 @@ bar_vect cargar_barcos () {
 	
 	//BUCLE PARA RELLENAR LA ESTRUCTURA DE BARCOS//
 	while (fgets (cad_linea, sizeof(cad_linea), f_bar) && i < num_tipo_bar) {
-		campo_barcos = sscanf (cad_linea, "%21[^-]-%2[^-]-%d",
+		campo_barcos = sscanf (cad_linea, "%21[^-]-%c-%d",
 		b.bar[i].nomb_barco,
-		b.bar[i].id_barco,
+		&b.bar[i].id_barco,
 		&b.bar[i].tam_barco);
 		
 		if (campo_barcos != 3) {								//Excepción si fallo en dato de barco
@@ -83,7 +83,7 @@ void guardar_barcos (bar_vect b) {
 	
 	//PROCESO DE GUARDADO DE DATOS DE CADA BARCO EN FICHERO//
 	for (i = 0; i < b.num_tipo_bar; i++) {
-		fprintf (f_bar, "%s-%s-%d\n",
+		fprintf (f_bar, "%s-%c-%d\n",
 		b.bar[i].nomb_barco,
 		b.bar[i].id_barco,
 		b.bar[i].tam_barco);
@@ -95,11 +95,10 @@ void guardar_barcos (bar_vect b) {
 //JUEGO:
 juego cargar_datajuego (bar_vect b, jug_vect jv) {
 	char filename[] = "Juego.txt";
-	int num_tipo_bar = 0;
-	int i, fila, colum;
+	int i = 0, fila, colum;
 	char cad_linea[250];							//Caracteres máximos que puede ocupar una linea en fichero
 	int campo_juego = 0;							//Entero que verifica nº campos de la estructura juego
-	char default_jue[] = "03-00-0\nA-00\n\n1-Defaultname1-000-A-0\n~~~\n~~~\n~~~\n\n~~~\n~~~\n~~~\n\n2-Defaultname2-000-A-0\n~~~\n~~~\n~~~\n\n~~~\n~~~\n~~~";	//Creación de un juego estandar
+	char default_jue[] = "03-00-1\nA-00\n1-Defaultname1-000-A-0\n~~~\n~~~\n~~~\n~~~\n~~~\n~~~\n2-Defaultname2-000-A-0\n~~~\n~~~\n~~~\n~~~\n~~~\n~~~";	//Creación de un juego estandar
 	
 	FILE *f_jue;
 	
@@ -190,7 +189,6 @@ juego cargar_datajuego (bar_vect b, jug_vect jv) {
 		
 		if (campo_juego != 3) {							//Excepción si fallo en dato de juego
 			printf ("1: Se produjo un error con los datos\n");
-			printf("Contenido de cad_linea: %s\n\n", cad_linea);
 			getchar ();
 			exit (EXIT_FAILURE);
 		}	
@@ -203,7 +201,6 @@ juego cargar_datajuego (bar_vect b, jug_vect jv) {
 		
 		if (campo_juego != 2) {
 			printf ("2: Se produjo un error con los datos\n");
-			printf("Contenido de cad_linea: %s\n\n", cad_linea);
 			getchar ();
 			exit (EXIT_FAILURE);
 		}
@@ -219,10 +216,9 @@ juego cargar_datajuego (bar_vect b, jug_vect jv) {
 			&jv.jug[i].num_disp,
 			&jv.jug[i].tipo_disp,
 			&jv.jug[i].ganador);
-		
+			
 			if (campo_juego != 5) {
 				printf ("3: Se produjo un error con los datos\n");
-				printf("Contenido de cad_linea: %s\n\n", cad_linea);
 				getchar ();
 				exit (EXIT_FAILURE);
 			}	
@@ -232,25 +228,17 @@ juego cargar_datajuego (bar_vect b, jug_vect jv) {
 			fgets (cad_linea, sizeof(cad_linea), f_jue);	//Leer línea del tablero1
 			for (colum = 0; colum < j.tam_tablero; colum++) {
 				jv.jug[i].tablero1[fila][colum] = cad_linea[colum * 2];
-				campo_juego = sscanf (cad_linea, "%c", jv.jug[i].tablero1[fila][colum]);
+				campo_juego = sscanf (cad_linea, "%c", &jv.jug[i].tablero1[fila][colum]);
 			}
-			
-			printf ("\n");
 		}
-		
-		printf ("\n");
 		
 		for (fila = 0; fila < j.tam_tablero; fila++) {
 			fgets (cad_linea, sizeof(cad_linea), f_jue);	//Leer línea del tablero2
 			for (colum = 0; colum < j.tam_tablero; colum++) {
 				jv.jug[i].tablero2[fila][colum] = '~';
-				campo_juego = sscanf (cad_linea, "%c", jv.jug[i].tablero2[fila][colum]);
+				campo_juego = sscanf (cad_linea, "%c", &jv.jug[i].tablero2[fila][colum]);
 			}
-			
-			printf ("\n");
 		}
-		
-		printf ("\n");
 	}
 	
 	fclose (f_jue);
@@ -295,29 +283,60 @@ void guardar_datajuego (juego j, bar_vect b, jug_vect jv) {
 			for (colum = 0; colum < j.tam_tablero; colum++) {
 				fprintf (f_jue, "%c", jv.jug[i].tablero1[fila][colum]);
 			}
-			
-			printf ("\n");
 		}
-		
-		printf ("\n");
 		
 		for (fila = 0; fila < j.tam_tablero; fila++) {
 			for (colum = 0; colum < j.tam_tablero; colum++) {
 				fprintf (f_jue, "%c", jv.jug[i].tablero2[fila][colum]);
 			}
-			
-			printf ("\n");
 		}
-		
-		printf ("\n");
 	}
 	
 	fclose (f_jue);
 }
 
-
-
-
+void menu_principal () {
+	int op;
+	char resp;
+	
+	do {
+		do {
+			titulo ();
+			printf ("\nQue desea hacer?\n\n");
+			Sleep (1000);
+			printf ("1. Ir al menu de configuracion\n");
+			printf ("2. Jugar una partida\n");
+			printf ("3. Salir del juego\n");
+			scanf ("%d", &op);
+			fflush (stdin);
+		}while (op < 1 || op > 3);
+		
+		switch (op) {
+			case 1:
+				
+			break;
+			
+			case 2:
+				
+			break;
+			
+			case 3:
+				
+			break;
+			
+			default:
+				
+			break;
+		}
+		
+		if (op != 3) {
+			printf ("\nDesea hacer algo mas? (S/N): ");
+			scanf ("%c", &resp);
+			confirmacion (&resp);
+			clear ();
+		}
+	}while (resp == 'S' || resp == 's');
+}
 
 
 
