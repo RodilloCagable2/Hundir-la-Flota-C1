@@ -75,7 +75,14 @@ juego cargar_datajuego (bar_vect, jug_vect);
 //POSCONDICIÓN: Vuelca datos en el fichero pero no devuelve nada
 void guardar_datajuego (juego, bar_vect, jug_vect);
 
+//---> RESUMEN: <---
+void resumen_partida ();
+
 //---> MENÚS: <---
+void menu_configuracion ();
+
+void menu_partida ();
+
 void menu_principal ();
 
 //---> GESTIÓN DE MEMORIA: <---

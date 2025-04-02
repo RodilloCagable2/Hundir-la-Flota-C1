@@ -56,7 +56,7 @@ int validar_id_barco (char id) {
 }
 
 int validar_tam_barco (int tam) {
-	return (tam > 0 && tam <= 5);
+	return (tam > 0 && tam <= 27);
 }
 
 //BARCOS:
@@ -359,37 +359,156 @@ void guardar_datajuego (juego j, bar_vect b, jug_vect jv) {
 	fclose (f_jue);
 }
 
+//RESUMEN:
+void resumen_partida () {
+	
+}
+
 //MENÚS:
-void menu_principal() {
+void menu_configuracion () {
 	int op;
-	char resp;
+	char resp = 'N';
 	
 	do {
 		do {
-			titulo();
-			printf("\nQue desea hacer?\n\n");
+			printf("\n<<<CONFIGURACION>>>\n\n");
 			Sleep(1000);
-			printf("1. Ir al menu de configuracion\n");
-			printf("2. Jugar una partida\n");
-			printf("3. Salir del juego\n");
+			printf("1. Introducir datos\n");
+			printf("2. Mostrar\n");
+			printf("3. Borrar\n");
+			printf("4. Guardar\n");
+			printf("5. Cargar\n");
+			printf("6. Volver\n\n");
 			scanf("%d", &op);
 			fflush(stdin);
-		} while (op < 1 || op > 3);
+		}while (op < 1 || op > 6);
 		
 		switch (op) {
 			case 1:
-				//TODO: Implementar menú de configuración
-				break;
+				
+			break;
 			
 			case 2:
-				//TODO: Implementar juego
-				break;
+				
+			break;
 			
 			case 3:
-				break;
+				
+			break;
 			
-			default:
-				break;
+			case 4:
+				
+			break;
+			
+			case 5:
+				
+			break;
+			
+			case 6:		//Caso de salida
+				printf("\nVolviendo al menu principal...\n");
+				Sleep(1000);
+				menu_principal();
+			break;
+			
+			default:	//Caso de error al seleccionar
+				printf("Seleccione una opcion valida: ");
+			break;
+		}
+		
+		if (op != 6) {
+			printf("\nDeseas hacer algo mas? (S/N): ");
+			scanf("%c", &resp);
+			confirmacion(&resp);
+			clear();
+		}
+	}while (resp == 'S' || resp == 's');
+}
+
+void menu_partida () {
+	int op;
+	char resp = 'N';
+	
+	do {
+		do {
+			printf("\n<<<JUGAR PARTIDA>>>\n\n");
+			Sleep(1000);
+			printf("1. Jugar partida\n");
+			printf("2. Reiniciar partida\n");
+			printf("3. Resumen\n");
+			printf("4. Volver\n\n");
+			scanf("%d", &op);
+			fflush(stdin);
+		}while (op < 1 || op > 4);
+		
+		switch (op) {
+			case 1:
+			
+			break;
+			
+			case 2:
+				
+			break;
+			
+			case 3:
+				resumen_partida();
+			break;
+			
+			case 4:		//Caso de salida
+				printf("\nVolviendo al menu principal...\n");
+				Sleep(1000);
+				menu_principal();
+			break;
+			
+			default:	//Caso de error al seleccionar
+				printf("Seleccione una opcion valida: ");
+			break;
+		}
+		
+		if (op != 4) {
+			printf("\nDeseas hacer algo mas? (S/N): ");
+			scanf("%c", &resp);
+			confirmacion(&resp);
+			clear();	
+		}
+	}while (resp == 'S' || resp == 's');
+}
+
+void menu_principal () {
+	int op;
+	char resp = 'N';
+	
+	do {
+		do {
+			clear();
+			titulo();
+			printf("\n<<<HUNDIR LA FLOTA>>>\n\n");
+			Sleep(1000);
+			printf("1. Configuracion\n");
+			printf("2. Jugar\n");
+			printf("3. Salir\n\n");
+			scanf("%d", &op);
+			fflush(stdin);
+		}while (op < 1 || op > 3);
+		
+		switch (op) {
+			case 1:
+				clear();
+				menu_configuracion();
+			break;
+			
+			case 2:
+				clear();
+				menu_partida();
+			break;
+			
+			case 3:		//Caso de salida
+				printf("\nHasta la proxima!\n");
+				exit(1);	
+			break;
+			
+			default:	//Caso de error al seleccionar
+				printf("Seleccione una opcion valida: ");
+			break;
 		}
 		
 		if (op != 3) {
@@ -398,7 +517,7 @@ void menu_principal() {
 			confirmacion(&resp);
 			clear();
 		}
-	} while (resp == 'S' || resp == 's');
+	}while (resp == 'S' || resp == 's');
 }
 
 
