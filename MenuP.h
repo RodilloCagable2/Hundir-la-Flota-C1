@@ -79,11 +79,11 @@ void guardar_datajuego (juego, bar_vect, jug_vect);
 void resumen_partida ();
 
 //---> MENÚS: <---
-void menu_configuracion ();
+void menu_configuracion (jug_vect, bar_vect, juego);
 
-void menu_partida ();
+void menu_partida (jug_vect, bar_vect, juego);
 
-void menu_principal ();
+void menu_principal (jug_vect, bar_vect, juego);
 
 //---> GESTIÓN DE MEMORIA: <---
 //PRECONDICIÓN: Se le pasa una estructura tipo jug_vect

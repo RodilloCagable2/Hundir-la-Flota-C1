@@ -1,130 +1,299 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
-#include <conio.h>
+#include "disparar.h"
 
 #define MAX_NOMBRE 20
 #define MAX_TABLERO 25
 
-typedef struct {
-    char id;
-    int cantidad;
-} Barco;
-
-typedef struct {
-    int indice;
-    char nombre[MAX_NOMBRE];
-    int disparos;
-    char tipo;
-    int ganador;
-    char tablero[MAX_TABLERO][MAX_TABLERO];
-    char tablero2[MAX_TABLERO][MAX_TABLERO];
-} Jugador;
-
-void leer_tablero(int *tam_vector, int *num_barcos, int *tam_lista_barcos, Jugador jugadores[], Barco barcos[]) {
-    FILE *fich;
-    int i, j, fila, col, sumatorio = 0;
-    char buffer[100];
-
-    if ((fich = fopen("juego.txt", "r")) == NULL) {
-        printf("Error abriendo el fichero juego.txt\n");
-        return;
-    }
-
-    // Leer configuración
-    fscanf(fich, "%d-%d-%d\n", tam_vector, num_barcos, tam_lista_barcos);
-    printf("Tamaño vector: %d, Número de barcos: %d, Tamaño lista barcos: %d\n", *tam_vector, *num_barcos, *tam_lista_barcos);
-
-    // Leer los barcos
-    i = 0;
-    while (sumatorio < *num_barcos) {
-        fscanf(fich, "%c-%i\n", &barcos[i].id, &barcos[i].cantidad);
-        sumatorio += barcos[i].cantidad;
-        i++;
-    }
-
-    // Leer jugadores
-    for (j = 0; j < 2; j++) {
-        fgets(buffer, sizeof(buffer), fich);
-        sscanf(buffer, "%d-%19[^-]-%d-%c-%d",
-               &jugadores[j].indice,
-               jugadores[j].nombre,
-               &jugadores[j].disparos,
-               &jugadores[j].tipo,
-               &jugadores[j].ganador);
-
-        // Leer tableros
-        for (fila = 0; fila < *tam_vector; fila++) {
-            fgets(buffer, sizeof(buffer), fich);
-            for (col = 0; col < *tam_vector; col++) {
-                jugadores[j].tablero[fila][col] = buffer[col * 2];
-                jugadores[j].tablero2[fila][col] = '~'; // Inicializar tablero de disparos con agua
-            }
-        }
-    }
-
-    fclose(fich);
+// Cabecera: int numeroAleatorio(int)
+// Precondición: variables no nulas
+// Postcondición: devuelve un número aleatorio acotado al tamaño del tablero
+int numeroAleatorio(int tam_vector) {
+    return (rand() % tam_vector);
 }
 
-void imprimirtablero(int cursorX, int cursorY, int turno, Jugador jugadores[], int tam_vector) {
-    system("cls"); // Limpia pantalla en Windows
+// Cabecera: void moverCursorConsola(int, int)
+// Precondición: Se conoce la posición x e y de la matriz
+// Postcondición: devuelve un número aleatorio acotado al tamaño del tablero
+void moverCursorConsola(int x, int y) {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    COORD pos = {x, y};
+    SetConsoleCursorPosition(hConsole, pos);
+}
 
-    char caracter = 'A';
-    printf("  "); // Espacio para la primera columna numérica
-    for (int i = 0; i < tam_vector; i++) {
-        printf(" %c ", caracter + i);
-    }
+// Cabecera imprimirtablero(int, int, int, Jugador, int)
+// Precondición: Variables no nulas
+// Postcondición: imprime el estado actual del tablero dependiendo del turno actual
+void imprimirtablero(int cursorX, int cursorY, int turno, jug_vect jv, int tam_vector) {
+    int i;
+    char c;
+
+    moverCursorConsola(0, 0);  // En lugar de limpiar la pantalla, movemos el cursor arriba
+
+    printf("                      ");
+    for (c = 'A'; c < 'A' + tam_vector; c++)
+        printf("  %c", c);
     printf("\n");
 
-    for (int i = 0; i < tam_vector; i++) {
-        printf("%d ", i);
+    for (i = 0; i < tam_vector; i++) {
+        printf("                    %2d ", i);
         for (int j = 0; j < tam_vector; j++) {
             if (i == cursorY && j == cursorX)
-                printf("[%c]", jugadores[turno].tablero2[i][j]);
+                printf("[%c]", jv.jug[turno].tablero2[i][j]);  // Resaltamos donde está el cursor
             else
-                printf(" %c ", jugadores[turno].tablero2[i][j]);
+                printf(" %c ", jv.jug[turno].tablero2[i][j]);
         }
         printf("\n");
     }
+    printf("disp: %i ganador: %i", jv.jug[turno].num_disp, jv.jug[turno].ganador);
 }
 
-void apuntar(int *cursorX, int *cursorY, int turno, Jugador jugadores[], int tam_vector) {
-    char input;
-    while (1) {
-        imprimirtablero(*cursorX, *cursorY, turno, jugadores, tam_vector);
-        input = getch();
-        if (input == 'w' || input == 'a' || input == 's' || input == 'd') {
-            moverCursor(input, cursorX, cursorY, tam_vector);
-        } else if (input == ' ') { // Espacio para disparar
-            if (jugadores[turno].tablero[*cursorY][*cursorX] == 'X') {
-                printf("¡Impacto!\n");
-                jugadores[turno].tablero2[*cursorY][*cursorX] = 'X'; // Marcar impacto en tablero de disparos
-            } else {
-                printf("¡Fallaste!\n");
-                jugadores[turno].tablero2[*cursorY][*cursorX] = 'O'; // Marcar fallo en tablero de disparos
-            }
+// Cabecera: void moverCursor(char, int *, int *, int)
+// Precondicíón: Se conoce la posición x e y de la matriz y el tamaño del vector
+// Postcondición: Dependiendo de la tecla presionada modifica las variables cursores.
+void moverCursor(char input, int *cursorX, int *cursorY, int tam_vector) {
+    switch (input) {
+        case 'w': if (*cursorY > 0) (*cursorY)--; break;
+        case 's': if (*cursorY < tam_vector - 1) (*cursorY)++; break;
+        case 'a': if (*cursorX > 0) (*cursorX)--; break;
+        case 'd': if (*cursorX < tam_vector - 1) (*cursorX)++; break;
+    }
+}
 
+// Cabecera: tocadoHundido(int, int, Jugador, int, int, int)
+// Precondición: Variables no nula
+// Postcondición: Devuelve la diferencia de las casillas tocadas por el jugador y la cantidad total de casillas que compone un barco
+int tocadoHundido(int cursorX, int cursorY, jug_vect jv, int turno, int turnoOpuesto, int tamTablero) {
+    int numAciertosMapa = 1; // El disparo original ya cuenta como acierto
+    int numAciertosJugador =1; // De la misma forma el disparo del jugador tambien cuenta como acierto
+    int aciertos = 0;
+    int dx, dy; // Variables para manejar direcciones
+    int x, y;
+
+    // Recorremos las 8 direcciones sin necesidad de una matriz
+    for (dx = -1; dx <= 1; dx++) {
+        for (dy = -1; dy <= 1; dy++) {
+            if (dx == 0 && dy == 0) continue; // Evita la posición original
+
+            x = cursorX + dx;
+            y = cursorY + dy;
+            if ((x >= 0) && (x < tamTablero) && (y >= 0) && (y < tamTablero) && (jv.jug[turnoOpuesto].tablero1[y][x] == 'X')) {
+                numAciertosMapa++;
+                if(jv.jug[turno].tablero2[y][x] == 'X'){
+                        numAciertosJugador++;
+                    }
+                // Seguir avanzando en la misma dirección
+                while ((x += dx) >= 0 && x < tamTablero &&
+                       (y += dy) >= 0 && y < tamTablero &&
+                       jv.jug[turnoOpuesto].tablero1[y][x] == 'X') {
+                    if(jv.jug[turno].tablero2[y][x] == 'X'){
+                        numAciertosJugador++;
+                    }
+                    numAciertosMapa++;
+                }
+            }
+            if (aciertos >= 2) return numAciertosMapa; // Terminamos si ya hay dos aciertos
+        }
+    }
+    return numAciertosMapa - numAciertosJugador; //devuelve la diferencia de barcos que han sido impactados para saber si un barco ha sido tocado o hundido
+}
+
+// Cabecera: actualizarHundido(int, int, Jugador, int, int, int, int [])
+// Precondición: Variables no nulas
+// Postcondición: Modifica en el tablero del jugador dado las casillas tocadas por casillas hundidas
+void actualizarHundido(int cursorX, int cursorY, jug_vect jv, int turno, int turnoOpuesto, int tamTablero, int barcosRestantes[]) {
+    int dx, dy, x, y; // Variables para manejar direcciones
+
+    // Recorremos las 8 direcciones sin necesidad de una matriz
+    for (dx = -1; dx <= 1; dx++) {
+        for (dy = -1; dy <= 1; dy++) {
+            x = cursorX + dx;
+            y = cursorY + dy;
+            if ((x >= 0) && (x < tamTablero) && (y >= 0) && (y < tamTablero) && (jv.jug[turnoOpuesto].tablero1[y][x] == 'X')) {
+                // Seguir avanzando en la misma dirección
+                jv.jug[turno].tablero2[y][x] = 'H';
+                while ((x += dx) >= 0 && x < tamTablero &&
+                       (y += dy) >= 0 && y < tamTablero &&
+                       jv.jug[turno].tablero2[y][x] == 'X') {
+                    jv.jug[turno].tablero2[y][x] = 'H';
+                }
+            }
+        }
+    }
+    barcosRestantes[turno]--;
+}
+
+// Cabecera: apuntarJugador(int *, int *, Jugador, int, int *, int *, int [])
+// Precondición: Variable no nulas
+// Postcondición: Modifica el tablero del jugador cuándo se cumplen las condiciones
+void apuntarJugador(int *cursorX, int *cursorY, jug_vect jv, int tam_vector, int *turno, int *turnoOpuesto, int barcosRestantes[]){
+    int valTocado;
+    char input;
+
+    printf("\n\nBB%iBB\n\n", barcosRestantes[*turno]);
+    imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+    input = getch();
+
+    if (input == 'w' || input == 'a' || input == 's' || input == 'd') {
+        moverCursor(input, cursorX, cursorY, tam_vector);
+    } else if ((input == ' ') && (jv.jug[*turno].tablero2[*cursorY][*cursorX] == '~')) { // Impide progresar si la casilla seleccionada ya ha sido revelada
+        char *casilla = &jv.jug[*turnoOpuesto].tablero1[*cursorY][*cursorX];
+
+        if (*casilla == 'X') {
+            jv.jug[*turno].tablero2[*cursorY][*cursorX] = 'X';
+            valTocado = tocadoHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector);
+            if(valTocado == 0) {
+                actualizarHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector, barcosRestantes);
+            }
+            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+        } else {
+            jv.jug[*turno].tablero2[*cursorY][*cursorX] = 'O';
+            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+            *turno = 1 - *turno;
+            *turnoOpuesto = 1 - *turnoOpuesto;
+        }
+        jv.jug[*turno].num_disp++;
+    }
+}
+
+// Cabecera: desplazarCpu(int *, int *, int *, int *, int, Jugador, int)
+// Precondición: Variables no nulas
+// Postcondición: Modifica la posición de la Cpu paso a paso dada la posición final que deberá tomar dicho valor
+void desplazarCpu(int *cursorX, int *cursorY, int *posX, int *posY, int turno, jug_vect jv, int tamTablero) {
+    // Asegúrate de que las coordenadas se modifican correctamente.
+    while (*cursorX != *posX || *cursorY != *posY) {
+        Sleep(50);
+        if (*cursorX < *posX) {
+            (*cursorX)++;
+        } else if (*cursorX > *posX) {
+            (*cursorX)--;
+        } else if (*cursorY < *posY) {
+            (*cursorY)++;
+        } else if (*cursorY > *posY) {
+            (*cursorY)--;
+        }
+        imprimirtablero(*cursorX, *cursorY, turno, jv, tamTablero);
+    }
+}
+
+// Cabecera: apuntarCPU(int *, int *, int *, int *, int *, int *, Jugador, int, int *, int *, int *, int *, int [])
+// Precondición: Variables no nulas
+// Postcondición: Modifica el tablero de la Cpu
+void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int *auxY, jug_vect jv, int tam_vector,
+                int *turno, int *turnoOpuesto, int *aciertoPrevioCpu, int *continuarDireccion, int barcosRestantes[]) {
+    int valTocado;
+    int i, j;
+    int intento = 0; // Contador de intentos para evitar bucles infinitos
+    printf("\n\nAA%iAA\n\n", barcosRestantes[*turno]);
+    // Seleccionar una posición aleatoria válida para disparar si no se ha acertado previamente
+    if (*aciertoPrevioCpu == 0) {
+        do {
+            *posY = numeroAleatorio(tam_vector);
+            *posX = numeroAleatorio(tam_vector);
+        } while (jv.jug[*turno].tablero2[*posY][*posX] != '~');
+
+        desplazarCpu(cursorX, cursorY, posX, posY, *turno, jv, tam_vector);
+
+        // Evaluar impacto del disparo
+        char *casilla = &jv.jug[*turno].tablero1[*cursorY][*cursorX];
+        char *casillaPropia = &jv.jug[*turno].tablero2[*cursorY][*cursorX];
+
+        if (*casillaPropia != '~') { // Ya se disparó aquí
+            intento++;
+            if (intento > 10) return;
+        }
+
+        if (*casilla == 'X') {
+            if (*aciertoPrevioCpu == 0) {
+                *auxY = *cursorY;
+                *auxX = *cursorX;
+            }
+            jv.jug[*turno].tablero2[*cursorY][*cursorX] = 'X';
+            valTocado = tocadoHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector);
+            if (valTocado == 0) {
+                actualizarHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector, barcosRestantes);
+                *aciertoPrevioCpu = 0;
+                *continuarDireccion = 0;
+            } else {
+                *aciertoPrevioCpu = 1;
+                *continuarDireccion = 1;
+            }
+            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+            Sleep(100);
+        } else {
+            jv.jug[*turno].tablero2[*cursorY][*cursorX] = 'O';
+            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+            *turno = 1 - *turno;
+            *turnoOpuesto = 1 - *turnoOpuesto;
+            Sleep(800);
+        }
+        jv.jug[*turno].num_disp++;
+    }
+    else { // Si la CPU acertó antes
+        desplazarCpu(cursorX, cursorY, auxX, auxY, *turno, jv, tam_vector);
+
+        // Generar una dirección válida
+        do {
+            i = -1 + numeroAleatorio(3);
+            j = -1 + numeroAleatorio(3);
+        } while ((*cursorX + i < 0 || *cursorX + i >= tam_vector ||
+                  *cursorY + j < 0 || *cursorY + j >= tam_vector ||
+                  jv.jug[*turno].tablero2[*cursorY + j][*cursorX + i] != '~'));
+
+        *posX = *cursorX + i;
+        *posY = *cursorY + j;
+        desplazarCpu(cursorX, cursorY, posX, posY, *turno, jv, tam_vector);
+
+        if (jv.jug[*turnoOpuesto].tablero1[*cursorY][*cursorX] == 'X') {
+            *continuarDireccion = 1;
+            do {
+                jv.jug[*turno].tablero2[*cursorY][*cursorX] = 'X';
+                valTocado = tocadoHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector);
+                if (valTocado == 0) {
+                    actualizarHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector, barcosRestantes);
+                    *aciertoPrevioCpu = 0;
+                    *continuarDireccion = 0;
+                }
+                // Asegurar que no se sale del tablero
+                if (*cursorX + i >= 0 && *cursorX + i < tam_vector && *cursorY + j >= 0 && *cursorY + j < tam_vector) {
+                    *posX = *cursorX + i;
+                    *posY = *cursorY + j;
+                    desplazarCpu(cursorX, cursorY, posX, posY, *turno, jv, tam_vector);
+                } else {
+                    break; // Si se sale, no continuar
+                }
+                imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+                Sleep(100);
+                jv.jug[*turno].num_disp++;
+            } while (jv.jug[*turnoOpuesto].tablero1[*cursorY][*cursorX] == 'X');
+        } else {
+            jv.jug[*turno].tablero2[*cursorY][*cursorX] = 'O';
+            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+            *turno = 1 - *turno;
+            *turnoOpuesto = 1 - *turnoOpuesto;
+            Sleep(800);
+        }
+        jv.jug[*turno].num_disp++;
+    }
+}
+
+// Cabecera: void disparar_jue(jug_vect, bar_vect)
+// Precondición: Recibo los registros de jugadores y de barcos
+// Postcondición: modifica la información de los jugadores
+void disparar_jue(jug_vect jv, bar_vect bv, juego j) {
+    srand(time(NULL));
+
+    int cursorX[2] = {0, 0}, cursorY[2] = {0, 0}; // Cursores de cada jugador
+    int posX[2], posY[2], auxX[2], auxY[2]; //Cursores para el funcionamiento de la Cpu
+    int aciertoPrevioCpu[2] = {0,0}, continuarDireccion[2] = {0,0};
+    int num_barcos, tam_lista_barcos, turno = 0, turnoOpuesto = 1;
+    int barcosRestantes[2];
+
+    while (1) {
+        if (jv.jug[turno].tipo_disp == 'M') {
+            apuntarJugador(&cursorX[turno], &cursorY[turno], jv, j.tam_tablero, &turno, &turnoOpuesto, barcosRestantes);
+        } else {
+            apuntarCPU(&cursorX[turno], &cursorY[turno], &posX[turno], &posY[turno], &auxX[turno], &auxY[turno], jv,
+                       j.tam_tablero, &turno, &turnoOpuesto, &aciertoPrevioCpu[turno], &continuarDireccion[turno], barcosRestantes);
         }
     }
 }
 
-void moverCursor(char direction, int *cursorX, int *cursorY, int tam_vector) {
-    if (direction == 'w' && *cursorY > 0) (*cursorY)--;
-    if (direction == 's' && *cursorY < tam_vector - 1) (*cursorY)++;
-    if (direction == 'a' && *cursorX > 0) (*cursorX)--;
-    if (direction == 'd' && *cursorX < tam_vector - 1) (*cursorX)++;
-}
-
-int main() {
-    int cursorX = 0, cursorY = 0, turno = 0;
-    int tam_vector = 0, num_barcos = 0, tam_lista_barcos = 0;
-
-    Barco barcos[10];
-    Jugador jugadores[2];
-
-    leer_tablero(&tam_vector, &num_barcos, &tam_lista_barcos, jugadores, barcos);
-    apuntar(&cursorX, &cursorY, turno, jugadores, tam_vector);
-
-    return 0;
-}
