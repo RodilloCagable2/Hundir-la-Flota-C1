@@ -22,6 +22,7 @@ free(mat);
 #include <stdlib.h>
 #include <windows.h>
 
+//ESTRUCTURAS:
 typedef struct {
 	char nomb_barco[21];	//Nombre del barco
 	char id_barco;			//Identificador del tipo de barco
@@ -43,11 +44,11 @@ typedef struct {
 	int ganador;			//0 = False / 1 = True
 	char **tablero1;		//Tablero con la flota del jugador
 	char **tablero2;		//Tablero con la flota del oponente en el cual se dispara
-}jugadores;
+} jugadores;
 
 typedef struct {
 	jugadores jug[2];
-}jug_vect;
+} jug_vect;
 
 typedef struct {
 	int tam_tablero;		//Valor n que representa los tamaños de los tableros
@@ -57,58 +58,70 @@ typedef struct {
 	int num_total_bar;		//Número total de barcos que conformarán la flota
 }juego;
 
-//---> BARCOS: <---
-//PRECONDICIÓN: Ninguna
-//POSCONDICIÓN: Inicializa una estructura tipo bar_vect con datos almacenados de un fichero
-bar_vect cargar_barcos ();
-
-//PRECONDICIÓN: Se le pasa una estructura tipo bar_vect
-//POSCONDICIÓN: Vuelca datos en el fichero pero no devuelve nada
-void guardar_barcos (bar_vect);
-
-//---> JUEGO: <---
-//PRECONDICIÓN: Ninguna
-//POSCONDICIÓN: Inicializa una estructura tipo jug_vect con datos almacenados de un fichero
-juego cargar_datajuego (bar_vect, jug_vect);
-
-//PRECONDICIÓN: Se le pasa una estructura tipo jug_vect
-//POSCONDICIÓN: Vuelca datos en el fichero pero no devuelve nada
-void guardar_datajuego (juego, bar_vect, jug_vect);
-
-//---> RESUMEN: <---
-void resumen_partida ();
-
-//---> MENÚS: <---
-void menu_configuracion (jug_vect, bar_vect, juego);
-
-void menu_partida (jug_vect, bar_vect, juego);
-
-void menu_principal (jug_vect, bar_vect, juego);
-
 //---> GESTIÓN DE MEMORIA: <---
-//PRECONDICIÓN: Se le pasa una estructura tipo jug_vect
-//POSCONDICIÓN: Libera la memoria de los tableros
-void liberar_tableros(jug_vect *jv, int tam_tablero);
 
-//PRECONDICIÓN: Se le pasa una estructura tipo bar_vect
+//PRECONDICIÓN: jv debe ser un puntero válido
+//POSCONDICIÓN: Libera la memoria de los tableros de ambos jugadores
+void liberar_tableros(jug_vect *, int);
+
+//PRECONDICIÓN: b debe ser un puntero válido
 //POSCONDICIÓN: Libera la memoria de los barcos
-void liberar_barcos(bar_vect *b);
+void liberar_barcos(bar_vect *);
 
-//PRECONDICIÓN: Se le pasa una estructura tipo juego
-//POSCONDICIÓN: Libera la memoria de num_bar_tipo
-void liberar_juego(juego *j);
+//PRECONDICIÓN: j debe ser un puntero válido
+//POSCONDICIÓN: Libera la memoria del juego
+void liberar_juego(juego *);
 
 //---> VALIDACIÓN: <---
-//PRECONDICIÓN: Se le pasa un nombre
-//POSCONDICIÓN: Devuelve 1 si el nombre es válido, 0 si no
-int validar_nombre(const char *nombre);
 
-//PRECONDICIÓN: Se le pasa un identificador de barco
-//POSCONDICIÓN: Devuelve 1 si el ID es válido, 0 si no
-int validar_id_barco(char id);
+//PRECONDICIÓN: nombre debe ser una cadena válida
+//POSCONDICIÓN: Devuelve 1 si el nombre es válido, 0 si no lo es
+int validar_nombre(const char *);
 
-//PRECONDICIÓN: Se le pasa un tamaño de barco
-//POSCONDICIÓN: Devuelve 1 si el tamaño es válido, 0 si no
-int validar_tam_barco(int tam);
+//PRECONDICIÓN: id debe ser un carácter
+//POSCONDICIÓN: Devuelve 1 si el id es válido, 0 si no lo es
+int validar_id_barco(char);
+
+//PRECONDICIÓN: tam debe ser un entero
+//POSCONDICIÓN: Devuelve 1 si el tamaño es válido, 0 si no lo es
+int validar_tam_barco(int);
+
+//---> BARCOS: <---
+
+//PRECONDICIÓN: Ninguna
+//POSCONDICIÓN: Devuelve 0 si la carga fue exitosa, -1 si hubo error. La estructura apuntada por b se actualiza con los datos cargados
+int cargar_barcos(bar_vect *);
+
+//PRECONDICIÓN: b debe ser un puntero válido
+//POSCONDICIÓN: Devuelve 0 si el guardado fue exitoso, -1 si hubo error
+int guardar_barcos(bar_vect *);
+
+//---> JUEGO: <---
+
+//PRECONDICIÓN: j, b y jv deben ser punteros válidos
+//POSCONDICIÓN: Devuelve 0 si la carga fue exitosa, -1 si hubo error. Las estructuras apuntadas se actualizan con los datos cargados
+int cargar_datajuego(juego *, bar_vect *, jug_vect *);
+
+//PRECONDICIÓN: j, b y jv deben ser punteros válidos
+//POSCONDICIÓN: Devuelve 0 si el guardado fue exitoso, -1 si hubo error
+int guardar_datajuego(juego *, bar_vect *, jug_vect *);
+
+//---> RESUMEN: <---
+
+void resumen_partida();
+
+//---> MENÚS: <---
+
+//PRECONDICIÓN: j, b y jv deben ser punteros válidos
+//POSCONDICIÓN: Devuelve 0 si la ejecución fue exitosa, -1 si hubo error
+int menu_configuracion(juego *, bar_vect *, jug_vect *);
+
+//PRECONDICIÓN: j, b y jv deben ser punteros válidos
+//POSCONDICIÓN: Devuelve 0 si la ejecución fue exitosa, -1 si hubo error
+int menu_partida(juego *, bar_vect *, jug_vect *);
+
+//PRECONDICIÓN: j, b y jv deben ser punteros válidos
+//POSCONDICIÓN: Devuelve 0 si la ejecución fue exitosa, -1 si hubo error
+int menu_principal(juego *, bar_vect *, jug_vect *);
 
 #endif
