@@ -12,6 +12,7 @@ void int_nombre(char nombre[]){
     static char ctrl;
     //Bucle para repetir la introducción del nombre en caso de quererlo
     do{
+        ctrl=0;
         //Bucle que se encarga de que el nombre introducido no tenga guiones
         do{
         ng=0;
@@ -43,6 +44,7 @@ void comienza(int *valor){
     static char ctrl;
     //Bucle para repetir la función en caso de quererlo
     do{
+        ctrl=0;
         //Bucle para asegurarse de que lo introducido es un 0 o un 1
         do{
             printf("\n================================\nIntroduzca si desea comenzar el primero de la partida: [S]=1 [N]=0\n");
@@ -62,6 +64,7 @@ void tipo_disparo(char *valor){
     static char ctrl;
     //Bucle para repetir la función en caso de quererlo
     do{
+        ctrl=0;
         do{
             printf("\n================================\nIntroduzca el tipo de disparo deseado: [Automatico]=A [Manual]=M\n");
             scanf("%c",valor);
@@ -86,6 +89,7 @@ void tam_tab(barcos v_barcos[],int n_barcos, int *valor){
     }
     //Bucle para repetir la función en caso de quererlo
     do{
+        ctrl1=0;
         printf("\n================================\nIntroduzca el numero que determinara las dimensiones del tablero\n");
         //Bucle que se asegura de que en el espacio establecido quepan todos los barcos
         do{
@@ -117,8 +121,10 @@ void cantipbar(barcos v_barcos[],int n_barcos){
     }
     //Bucle para repetir la función en caso de quererlo
     do{
+            ctrl2=0;
             //Bucle para cambiar la cantidad de los barcos
             do{
+            ctrl1=0;
             printf("\n================================\nSeleccione la id del barco cuya cantidad desea modificar\n");
             //Bucle que se asegura de que el jugador coja una id válida
             do{
@@ -156,6 +162,7 @@ void crear_barco(bar_vect *barc, juego *jug){
     printf("\n================================\nA continuación usted va a crear barcos nuevos para la flota\n================================\n");
     //Bucle para repetir la función en caso de quererlo
     do{
+        ctrl2=0;
         //Aumento del vector dinamico y la cantidad de tipos de barco
         barc->num_tipo_bar++;
         barc->bar=(barcos*)realloc(barc->bar,(barc->num_tipo_bar)*sizeof(barcos));
@@ -168,6 +175,7 @@ void crear_barco(bar_vect *barc, juego *jug){
         ctrl1=0;
         //Bucle que se asegura de que la nueva id no este ya cogida por otro barco
         do{
+           ctrl1=0;
            printf("Introduzca la id del nuevo barco: ");
            fflush(stdin);
            scanf("%c",&barc->bar[i].id_barco);

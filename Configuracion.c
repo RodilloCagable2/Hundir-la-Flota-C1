@@ -15,6 +15,7 @@ void Borrar(){
     FILE *in;
     //Bucle para repetir la función en caso de quererlo
     do{
+        ctrl1=0;
         ctrl=0;
         ctrl2=0;
         printf("\n================================\nIntroduzca cual de los ficheros desea eliminar.\n [1] Juego.txt | [2] Barcos.txt | [3] Ambos | [0] Salir\n");
@@ -132,6 +133,7 @@ void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
     char ctrl,auxc;
     //Bucle para repetir la función en caso de quererlo
     do{
+        ctrl=0;
         op2=0;
         //Menu que le muestra al jugador las opciones y no le deja salir hasta que la op indique una de las opciones
         do {
