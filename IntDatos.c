@@ -51,8 +51,8 @@ void comienza(int *valor){
             if(*valor!=0 && *valor!=1) printf("\nDebe introducir un 0 o un 1\n");
         }while(*valor!=0 && *valor!=1);
         //Mostrar lo establecido por si no es del agrado del jugador
-        if(valor==0) printf("\nUsted ha establecido no comenzar primero\n");
-        if(valor==1) printf("\nUsted ha establecido comenzar primero\n");
+        if(*valor==0) printf("\nUsted ha establecido no comenzar primero\n");
+        if(*valor==1) printf("\nUsted ha establecido comenzar primero\n");
         printf("\n================================\n¿Desea cambiar este ajuste? [S] [N]\n");
         confirmacion(&ctrl);
     }while(ctrl!='N' && ctrl!='n');
