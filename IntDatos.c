@@ -21,12 +21,13 @@ void int_nombre(char nombre[]){
         fgets(nombre,21,stdin);
         //Bucle que analiza todos los caracteres de la cadena en busca de guiones
         for(i=0;i<21;i++){
-            if(nombre[i]=='-')
+            if(nombre[i]=='-'){
                 ng=1;
+            }
         }
         if(ng==1)
             printf("No se admiten guiones ('-'), introduzca el nombre de nuevo\n");
-        }while(ng=!0);
+        }while(ng!=0);
         terminador_cad(nombre);
         //Mostrar el nombre escrito por si no es del agrado del usuario
         printf("\n================================\nEl nombre introducido es:\n");
