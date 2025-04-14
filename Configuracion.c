@@ -87,14 +87,14 @@ void Borrar(){
     }while(ctrl1!='N' && ctrl1!='n');
 }
 
-void mostrar_barcos(barcos v_barcos[],int n_barcos){
+void mostrar_barcos(bar_vect *b){
     static int i;
     printf("\n================================\nEL ASTILLERO\n================================\n");
     printf("ID---Nombre---Cantidad\n\n");
-    for(i=0;i<n_barcos;i++){
-            printf("%c-",v_barcos[i].id_barco);
-            printf("%s: ",v_barcos[i].nomb_barco);
-            printf("%i\n",v_barcos[i].num_bar_tipo);
+    for(i=0;i<b->num_tipo_bar;i++){
+            printf("%c-",b->bar[i].id_barco);
+            printf("%s: ",b->bar[i].nomb_barco);
+            printf("%i\n",b->bar[i].num_bar_tipo);
     }
 }
 

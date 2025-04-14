@@ -14,7 +14,7 @@ void Borrar();
 //Función Mostrar Barcos + La Cantidad de cada uno
 //Precondición: barcos v_barcos[] es un vector que almacena datos con estructura barcos e int n_barcos el numero total de tipos de barcos.
 //Postcondición: Mostrar por pantalla todos los tipos de barco y la cantidad de cada uno.
-void mostrar_barcos(barcos v_barcos[],int n_barcos);
+void mostrar_barcos(bar_vect *b);
 
 //Función Mostrar Configuracion
 /*Precondición: jugadores jug_vect es un vector que almacena datos con esctructura jugadores y  juego jueg es una variable que nos pasara
