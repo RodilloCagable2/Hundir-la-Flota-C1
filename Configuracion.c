@@ -92,10 +92,8 @@ void mostrar_barcos(barcos v_barcos[],int n_barcos){
     printf("\n================================\nEL ASTILLERO\n================================\n");
     printf("ID---Nombre---Cantidad\n\n");
     for(i=0;i<n_barcos;i++){
-            printf("%i-",v_barcos[i].id_barco);
+            printf("%c-",v_barcos[i].id_barco);
             printf("%s: ",v_barcos[i].nomb_barco);
-            if(v_barcos[i].num_bar_tipo==NULL)
-                v_barcos[i].num_bar_tipo=0;
             printf("%i\n",v_barcos[i].num_bar_tipo);
     }
 }

@@ -115,8 +115,6 @@ void cantipbar(barcos v_barcos[],int n_barcos){
     for(i=0;i<n_barcos;i++){
             printf("%i-",v_barcos[i].id_barco);
             printf("%s: ",v_barcos[i].nomb_barco);
-            if(v_barcos[i].num_bar_tipo==NULL)
-                v_barcos[i].num_bar_tipo=0;
             printf("%i\n",v_barcos[i].num_bar_tipo);
     }
     //Bucle para repetir la función en caso de quererlo
@@ -147,8 +145,6 @@ void cantipbar(barcos v_barcos[],int n_barcos){
         for(i=0;i<n_barcos;i++){
         printf("%i-",v_barcos[i].id_barco);
         printf("%s: ",v_barcos[i].nomb_barco);
-        if(v_barcos[i].num_bar_tipo==NULL)
-            v_barcos[i].num_bar_tipo=0;
         printf("%i\n",v_barcos[i].num_bar_tipo);
         }
         printf("\n================================\nEste es su astillero actual. ¿Desea hacer algun otro cambio a la cantidad de los barcos? [S] [N]\n");
