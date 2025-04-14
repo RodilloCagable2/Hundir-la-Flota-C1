@@ -98,26 +98,26 @@ void mostrar_barcos(barcos v_barcos[],int n_barcos){
     }
 }
 
-void mostrar_config(jugadores jug_vect[],juego jueg){
+void mostrar_config(jugadores j_vect[],juego jueg){
     static int i;
     printf("\n================================\nConfiguracion actual\n================================\n");
     //Bucle que imprime ambos jugadores del registro
     for(i=0;i<2;i++){
         printf("\nDatos del jugador %i:\n",i+1);
-        printf("Id: %i\n",jug_vect[i].id_jug);
-        printf("Nombre: %s\n",jug_vect[i].nomb_jug);
+        printf("Id: %i\n",j_vect[i].id_jug);
+        printf("Nombre: %s\n",j_vect[i].nomb_jug);
         //Condicional que traduce a o m en Automático o Manual respectivamente
-        if(jug_vect[i].tipo_disp=='m' || jug_vect[i].tipo_disp=='M')
+        if(j_vect[i].tipo_disp=='m' || j_vect[i].tipo_disp=='M')
             printf("Tipo de disparo: Manual\n");
         else{
-            if(jug_vect[i].tipo_disp=='a' || jug_vect[i].tipo_disp=='A')
+            if(j_vect[i].tipo_disp=='a' || j_vect[i].tipo_disp=='A')
             printf("Tipo de disparo: Automatico\n");
         }
         //Condicional que traduce el 0 o 1 en si desea comenzar o no
-        if(jug_vect[i].comienza==0)
+        if(j_vect[i].comienza==0)
             printf("Comienza: Este jugador no desea comenzar primero\n");
         else{
-            if(jug_vect[i].comienza==1)
+            if(j_vect[i].comienza==1)
             printf("Comienza: Este jugador desea comenzar primero\n");
         }
         printf("\n================================\n");
