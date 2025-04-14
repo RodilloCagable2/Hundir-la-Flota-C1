@@ -35,6 +35,7 @@ void int_nombre(char nombre[]){
         //Easter eggs
         if(strcmp(nombre,"Among Us\0")==0) printf("\nYou're so sussy\n");
         if(strcmp(nombre,"Harry Potter\0")==0) printf("\nYou're a wizard Harry\n");
+        if(strcmp(nombre,"Pedro\0")==0) printf("\nBuenas profesor :)\n");
         //Opcion para sobreescribir el nombre en caso de necesitarlo
         printf("\n================================\n¿Desea cambiar el nombre? [S] [N]\n");
         confirmacion(&ctrl);
