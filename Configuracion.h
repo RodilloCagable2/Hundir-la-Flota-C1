@@ -1,4 +1,4 @@
-//Archivo de cabecera del M骴ulo Configuraci髇
+//Archivo de cabecera del M贸dulo Configuraci贸n
 
 #ifndef CONFIGURACION_H_INCLUDED
 #define CONFIGRACION_H_INCLUDED
@@ -6,26 +6,26 @@
 
 //Funciones para el manejo de ficheros
 
-//Funci髇 Borrar Ficheros
-//Precondici髇: N/A
-//Postcondici髇: Dar a elegir al usuario cual de los ficheros eliminar y eliminarlos en el acto
+//Funci贸n Borrar Ficheros
+//Precondici贸n: N/A
+//Postcondici贸n: Dar a elegir al usuario cual de los ficheros eliminar y eliminarlos en el acto
 void Borrar();
 
-//Funci髇 Mostrar Barcos + La Cantidad de cada uno
-//Precondici髇: barcos v_barcos[] es un vector que almacena datos con estructura barcos e int n_barcos el numero total de tipos de barcos.
-//Postcondici髇: Mostrar por pantalla todos los tipos de barco y la cantidad de cada uno.
+//Funci贸n Mostrar Barcos + La Cantidad de cada uno
+//Precondici贸n: barcos v_barcos[] es un vector que almacena datos con estructura barcos e int n_barcos el numero total de tipos de barcos.
+//Postcondici贸n: Mostrar por pantalla todos los tipos de barco y la cantidad de cada uno.
 void mostrar_barcos(bar_vect *b);
 
-//Funci髇 Mostrar Configuracion
-/*Precondici髇: jugadores jug_vect es un vector que almacena datos con esctructura jugadores y  juego jueg es una variable que nos pasara
+//Funci贸n Mostrar Configuracion
+/*Precondici贸n: jugadores jug_vect es un vector que almacena datos con esctructura jugadores y  juego jueg es una variable que nos pasara
                 por valor lo almacenado en el registro para su impresion*/
-//Postcondici髇: Mostrar por pantall la configuraci髇 establecida para el juego.
+//Postcondici贸n: Mostrar por pantall la configuraci贸n establecida para el juego.
 void mostrar_config(jug_vect *j,juego jueg);
 
 //Funcion Introducir Datos
-/*Precondici髇: jug_vect *jueg es un puntero que pasa la totalidad del registro jug_vect, juego *j es un puntero que pasa la totalidad del registro juego
+/*Precondici贸n: jug_vect *jueg es un puntero que pasa la totalidad del registro jug_vect, juego *j es un puntero que pasa la totalidad del registro juego
                 bar_vect *barc es un puntero que pasa la totalidad del registro bar_vect*/
-//Postcondici髇: Anexionar todas las funciones de la libreria IntDatos.h en un menu para facilitar su implementacion en MenuP.c
+//Postcondici贸n: Anexionar todas las funciones de la libreria IntDatos.h en un menu para facilitar su implementacion en MenuP.c
 void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc);
 
 #endif // CONFIGURACION_H_INCLUDED

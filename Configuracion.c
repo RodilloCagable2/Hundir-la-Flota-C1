@@ -1,12 +1,12 @@
-//Archivo de código del Módulo Configuración
+//Archivo de cÃ³digo del MÃ³dulo ConfiguraciÃ³n
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "MenuP.h"
-#include "IntDatos.h"
 #include "Complementos.h"
 #include "Configuracion.h"
+#include "IntDatos.h"
 #define MAX 100
 
 void Borrar(){
@@ -23,7 +23,7 @@ void Borrar(){
         do{
             scanf("%i",&ctrl2);
             fflush(stdin);
-            if(ctrl2!=0 && ctrl2!=1 && ctrl2!=2 && ctrl2!=3 && ctrl2!=4) printf("\nEl numero introducido no es válido, por favor, introduzca un numero del 1 al 4.\n");
+            if(ctrl2!=0 && ctrl2!=1 && ctrl2!=2 && ctrl2!=3 && ctrl2!=4) printf("\nEl numero introducido no es vÃ¡lido, por favor, introduzca un numero del 1 al 4.\n");
         }while(ctrl2!=0 && ctrl2!=1 && ctrl2!=2 && ctrl2!=3 && ctrl2!=4);
         switch(ctrl2){
         //Caso 0 = Salir sin borrar nada
@@ -32,7 +32,7 @@ void Borrar(){
         //Caso 1 = Borrar Juego.txt
         case 1:
             //Asegurarse de que el borrado no es accidental
-            printf("\nUsted va a eliminar el fichero Juego.txt. ¿Esta seguro? (Esta operacion no se podra deshacer) [S] [N]\n");
+            printf("\nUsted va a eliminar el fichero Juego.txt. Â¿Esta seguro? (Esta operacion no se podra deshacer) [S] [N]\n");
             confirmacion(&ctrl);
             if(ctrl=='S'||ctrl=='s'){
                 if((in=fopen("./Juego.txt","w"))!=NULL){
@@ -48,7 +48,7 @@ void Borrar(){
         //Caso 2 = Borrar Barcos.txt
         case 2:
             //Asegurarse de que el borrado no es accidental
-            printf("\nUsted va a eliminar el fichero Barcos.txt. ¿Esta seguro? (Esta operacion no se podra deshacer) [S] [N]\n");
+            printf("\nUsted va a eliminar el fichero Barcos.txt. Â¿Esta seguro? (Esta operacion no se podra deshacer) [S] [N]\n");
             confirmacion(&ctrl);
             if(ctrl=='S'||ctrl=='s'){
                 if((in=fopen("./Barcos.txt","w"))!=NULL){
@@ -63,7 +63,7 @@ void Borrar(){
             break;
         //Caso 3 = Borrar ambos ficheros
         case 3:
-            printf("\nUsted va a eliminar ambos ficheros. ¿Esta seguro? (Esta operacion no se podra deshacer) [S] [N]\n");
+            printf("\nUsted va a eliminar ambos ficheros. Â¿Esta seguro? (Esta operacion no se podra deshacer) [S] [N]\n");
             confirmacion(&ctrl);
             if(ctrl=='S'||ctrl=='s'){
                 if((in=fopen("./Juego.txt","w"))!=NULL){
@@ -82,7 +82,7 @@ void Borrar(){
                 printf("\nEliminacion cancelada\n");
             break;
         }
-        printf("\n================================\n¿Desea eliminar otro fichero? [S] [N]\n");
+        printf("\n================================\nÂ¿Desea eliminar otro fichero? [S] [N]\n");
         confirmacion(&ctrl1);
     }while(ctrl1!='N' && ctrl1!='n');
 }
@@ -129,7 +129,7 @@ void mostrar_config(jug_vect *j,juego jueg){
 void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
     int op,op2,auxi;
     char ctrl,auxc;
-    //Bucle para repetir la función en caso de quererlo
+    //Bucle para repetir la funciÃ³n en caso de quererlo
     do{
         ctrl=0;
         op2=0;
@@ -155,7 +155,7 @@ void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
                 do{
                     scanf("%d",&op2);
                     fflush(stdin);
-                    if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo\n");
+                    if(op2!=1 && op2!=2) printf("El valor introducido no es vÃ¡lido, por favor intentelo de nuevo\n");
                 }while(op2!=1 && op2!=2);
                 op2=op2-1;
                 int_nombre(jueg->jug[op2].nomb_jug);
@@ -168,7 +168,7 @@ void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
                 do{
                     scanf("%d",&op2);
                     fflush(stdin);
-                    if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo\n");
+                    if(op2!=1 && op2!=2) printf("El valor introducido no es vÃ¡lido, por favor intentelo de nuevo\n");
                 }while(op2!=1 && op2!=2);
                 op2=op2-1;
                 tipo_disparo(&auxc);
@@ -182,7 +182,7 @@ void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
                 do{
                     scanf("%d",&op2);
                     fflush(stdin);
-                    if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo\n");
+                    if(op2!=1 && op2!=2) printf("El valor introducido no es vÃ¡lido, por favor intentelo de nuevo\n");
                 }while(op2!=1 && op2!=2);
                 op2=op2-1;
                 comienza(&auxi);

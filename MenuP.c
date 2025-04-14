@@ -1,6 +1,8 @@
 #include "MenuP.h"
-#include "Configuracion.h"
 #include "Complementos.h"
+#include "Configuracion.h"
+#include "IntDatos.h"
+#include "disparar.h"
 
 //GESTIÓN DE MEMORIA:
 void liberar_tableros(jug_vect *jv, int tam_tablero) {
@@ -174,7 +176,7 @@ int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
 	int i = 0, fila, colum;
 	char cad_linea[250];
 	int campo_juego = 0;
-	char default_jue[] = "03-00-1\nA-00\n1-Defaultname1-000-A-0\n~~~\n~~~\n~~~\n~~~\n~~~\n~~~\n2-Defaultname2-000-A-0\n~~~\n~~~\n~~~\n~~~\n~~~\n~~~";
+	char default_jue[] = "03-01-1\nS-01\n1-Defaultname1-000-M-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~\n2-Defaultname2-000-A-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~";
 
 	FILE *f_jue = fopen(filename, "r");
 
@@ -457,26 +459,27 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 				printf("Que desea ver? [1] Configuracion Global [2] Barcos [3] Ambas\n");
 				//Bucle para asegurarse de que se seleccione una opción correcta
 				do{
-                        sscanf("%i",&op2);
-                        fflush(stdin);
+                    scanf("%i",&op2);
+                    fflush(stdin);
 				}while(op2!=1 || op2!=2 || op!=3);
+				
 				switch(op2){
 				    case 1:
-				        mostrar_config(jv->jug,j);
+				        mostrar_config(jv, *j);
 				        break;
                     case 2:
-                        mostrar_barcos(b->bar,b->num_tipo_bar);
+                        mostrar_barcos(b);
                         break;
                     case 3:
-                        mostrar_config(jv->jug,j);
-                        mostrar_barcos(b->bar,b->num_tipo_bar);
+                        mostrar_config(jv, *j);
+                        mostrar_barcos(b);
                         break;
 				}
 				break;
 
 			case 3:
 				//Función que borra los ficheros que el jugador desee
-				borrar;
+				Borrar();
 				break;
 
 			case 4:
@@ -621,6 +624,3 @@ int menu_principal(juego *j, bar_vect *b, jug_vect *jv) {
 
 	return 0;
 }
-
-
-

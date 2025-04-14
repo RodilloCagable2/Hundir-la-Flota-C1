@@ -1,4 +1,4 @@
-//Archivo de cabecera del MÛdulo Introducir Datos
+//Archivo de cabecera del M√≥dulo Introducir Datos
 
 #ifndef INTDATOS_H_INCLUDED
 #define INTDATOS_H_INCLUDED
@@ -6,36 +6,34 @@
 
 //Funciones que usara la configuracion
 
-//FunciÛn Introducir Nombre
-//Precondicion: char nombre[] es el vector de caracteres donde almacenaremos la cadena, su tamaÒo maximo es 20
+//Funci√≥n Introducir Nombre
+//Precondicion: char nombre[] es el vector de caracteres donde almacenaremos la cadena, su tama√±o maximo es 20
 //Postcondicion: Introducir una cadena de caracteres a un vector desde el teclado
 void int_nombre(char nombre[]);
 
-//FunciÛn Determinar si comienza
-//PrecondiciÛn: int *valor es un puntero a entero donde se introducir· el valor
-//PostcondiciÛn: Introducir un 0 o 1 y almacenarlo mediante el puntero, adem·s de asegurarse que solo pueda ser un 1 o un 0.
+//Funci√≥n Determinar si comienza
+//Precondici√≥n: int *valor es un puntero a entero donde se introducir√° el valor
+//Postcondici√≥n: Introducir un 0 o 1 y almacenarlo mediante el puntero, adem√°s de asegurarse que solo pueda ser un 1 o un 0.
 void comienza(int *valor);
 
-//FunciÛn selectora del tipo de disparo
-//PrecondiciÛn: int *valor es un puntero a caracter donde se introducir· el valor
-//PostcondiciÛn: Introducir un A o M y almacenarlo mediante el puntero, adem·s de asegurarse que solo pueda ser un A o un M.
+//Funci√≥n selectora del tipo de disparo
+//Precondici√≥n: int *valor es un puntero a caracter donde se introducir√° el valor
+//Postcondici√≥n: Introducir un A o M y almacenarlo mediante el puntero, adem√°s de asegurarse que solo pueda ser un A o un M.
 void tipo_disparo(char *valor);
 
-//FunciÛn tamaÒo tablero
-/*PrecondiciÛn: barcos v_barcos[] es un vector que almacena datos con estructura barcos e int n_barcos el numero total de tipos de barcos. int *valor
-                sera el puntero donde guardaremos el tamaÒo del tablero*/
-/*PostcondiciÛn: Establecer el tamaÒo del tablero y asegurarse de que este no pueda ser m·s pequeÒo al tamaÒo teÛrico m·ximo que ocupanr·n
-                 los barcos*/
+//Funci√≥n tama√±o tablero
+/*Precondici√≥n: barcos v_barcos[] es un vector que almacena datos con estructura barcos e int n_barcos el numero total de tipos de barcos. int *valor sera el puntero donde guardaremos el tama√±o del tablero*/
+/*Postcondici√≥n: Establecer el tama√±o del tablero y asegurarse de que este no pueda ser m√°s peque√±o al tama√±o te√≥rico m√°ximo que ocupanr√°n los barcos*/
 void tam_tab(barcos v_barcos[],int n_barcos, int *valor);
 
-//FunciÛn determinar cantidad de barco por tipo
-//PrecondiciÛn: barcos v_barcos[] es un vector que almacena datos con estructura barcos e int n_barcos el numero total de tipos de barcos.
-//PostcondiciÛn: Establecer la cantidad de barcos que hay por cada tipo.
+//Funci√≥n determinar cantidad de barco por tipo
+//Precondici√≥n: barcos v_barcos[] es un vector que almacena datos con estructura barcos e int n_barcos el numero total de tipos de barcos.
+//Postcondici√≥n: Establecer la cantidad de barcos que hay por cada tipo.
 void cantipbar(barcos v_barcos[],int n_barcos);
 
-//FunciÛn aÒadir barcos nuevos
-//PrecondiciÛn bar_vect *barc es un puntero que pasa la totalidad del registro bar_vect, juego *jug es un puntero que pasa la totalidad del registro juego
-//PostcondiciÛn AÒadir un barco nuevo al registro con todas sus caracterÌsticas sin afectar a los ya establecidos
+//Funci√≥n a√±adir barcos nuevos
+//Precondici√≥n bar_vect *barc es un puntero que pasa la totalidad del registro bar_vect, juego *jug es un puntero que pasa la totalidad del registro juego
+//Postcondici√≥n A√±adir un barco nuevo al registro con todas sus caracter√≠sticas sin afectar a los ya establecidos
 void crear_barco(bar_vect *barc, juego *jug);
 
 #endif // INTDATOS_H_INCLUDED
