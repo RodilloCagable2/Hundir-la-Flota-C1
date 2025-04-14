@@ -17,15 +17,15 @@ void Borrar();
 void mostrar_barcos(barcos v_barcos[],int n_barcos);
 
 //Función Mostrar Configuracion
-/*Precondición: jugadores jug_vect es un vector que almacena datos con esctructura jugadores y  juego jueg es una variable que nos pasará
-                por valor lo almacenado en el registro para su impresión*/
+/*Precondición: jugadores jug_vect es un vector que almacena datos con esctructura jugadores y  juego jueg es una variable que nos pasara
+                por valor lo almacenado en el registro para su impresion*/
 //Postcondición: Mostrar por pantall la configuración establecida para el juego.
-void mostrar_config(jugadores j_vect[],juego jueg);
+void mostrar_config(jug_vect *j,juego jueg);
 
 //Funcion Introducir Datos
 /*Precondición: jug_vect *jueg es un puntero que pasa la totalidad del registro jug_vect, juego *j es un puntero que pasa la totalidad del registro juego
                 bar_vect *barc es un puntero que pasa la totalidad del registro bar_vect*/
-//Postcondición: Anexionar todas las funciones de la librería IntDatos.h en un menu para facilitar su implementación en MenuP.c
+//Postcondición: Anexionar todas las funciones de la libreria IntDatos.h en un menu para facilitar su implementacion en MenuP.c
 void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc);
 
 #endif // CONFIGURACION_H_INCLUDED

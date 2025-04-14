@@ -13,13 +13,13 @@ void Borrar(){
     static char ctrl,ctrl1;
     static int ctrl2;
     FILE *in;
-    //Bucle para repetir la función en caso de quererlo
+    //Bucle para repetir la funcion en caso de quererlo
     do{
         ctrl1=0;
         ctrl=0;
         ctrl2=0;
         printf("\n================================\nIntroduzca cual de los ficheros desea eliminar.\n [1] Juego.txt | [2] Barcos.txt | [3] Ambos | [0] Salir\n");
-        //Bucle para asegurarse de que el jugador elige una opción correcta
+        //Bucle para asegurarse de que el jugador elige una opcion correcta
         do{
             scanf("%i",&ctrl2);
             fflush(stdin);
@@ -98,26 +98,26 @@ void mostrar_barcos(barcos v_barcos[],int n_barcos){
     }
 }
 
-void mostrar_config(jugadores j_vect[],juego jueg){
+void mostrar_config(jug_vect *j,juego jueg){
     static int i;
     printf("\n================================\nConfiguracion actual\n================================\n");
     //Bucle que imprime ambos jugadores del registro
     for(i=0;i<2;i++){
         printf("\nDatos del jugador %i:\n",i+1);
-        printf("Id: %i\n",j_vect[i].id_jug);
-        printf("Nombre: %s\n",j_vect[i].nomb_jug);
-        //Condicional que traduce a o m en Automático o Manual respectivamente
-        if(j_vect[i].tipo_disp=='m' || j_vect[i].tipo_disp=='M')
+        printf("Id: %i\n",j->jug[i].id_jug);
+        printf("Nombre: %s\n",j->jug[i].nomb_jug);
+        //Condicional que traduce a o m en Automatico o Manual respectivamente
+        if(j->jug[i].tipo_disp=='m' || j->jug[i].tipo_disp=='M')
             printf("Tipo de disparo: Manual\n");
         else{
-            if(j_vect[i].tipo_disp=='a' || j_vect[i].tipo_disp=='A')
+            if(j->jug[i].tipo_disp=='a' || j->jug[i].tipo_disp=='A')
             printf("Tipo de disparo: Automatico\n");
         }
         //Condicional que traduce el 0 o 1 en si desea comenzar o no
-        if(j_vect[i].comienza==0)
+        if(j->jug[i].comienza==0)
             printf("Comienza: Este jugador no desea comenzar primero\n");
         else{
-            if(j_vect[i].comienza==1)
+            if(j->jug[i].comienza==1)
             printf("Comienza: Este jugador desea comenzar primero\n");
         }
         printf("\n================================\n");
@@ -151,7 +151,7 @@ void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
             case 1:
                 //Cambiar o Introducir el nombre a un jugador
                 printf("\n================================\nSeleccione el jugador cuyo nombre desea cambiar. [1] [2]\n");
-                //Bucle que se asegura de que se escoja un jugador válido
+                //Bucle que se asegura de que se escoja un jugador valido
                 do{
                     scanf("%d",&op2);
                     fflush(stdin);
@@ -161,10 +161,10 @@ void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
                 int_nombre(jueg->jug[op2].nomb_jug);
                 break;
             case 2:
-                //Seleccionar si el disparo es automático o manual
+                //Seleccionar si el disparo es automatico o manual
                 auxc=0;
                 printf("\n================================\nSeleccione el jugador cuyo tipo de disparo desea cambiar. [1] [2]\n");
-                //Bucle que se asegura de que se escoja un jugador válido
+                //Bucle que se asegura de que se escoja un jugador valido
                 do{
                     scanf("%d",&op2);
                     fflush(stdin);
@@ -178,7 +178,7 @@ void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
                 //Seleccionar si el jugador seleccionado quiere empezar o no
                 auxi=0;
                 printf("\n================================\nSeleccione el jugador cuya variable de comienzo desea cambiar. [1] [2]\n");
-                //Bucle que se asegura de que se escoja un jugador válido
+                //Bucle que se asegura de que se escoja un jugador valido
                 do{
                     scanf("%d",&op2);
                     fflush(stdin);
