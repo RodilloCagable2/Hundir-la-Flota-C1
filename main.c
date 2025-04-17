@@ -30,10 +30,10 @@ int main() {
         return -1;
     }
 	
-	disparar_jue(&jv, &b, &j);
+	//disparar_jue(&jv, &b, &j);
 	
     // Ejecutar menú principal
-    //resultado = menu_principal(&j, &b, &jv);
+    resultado = menu_principal(&j, &b, &jv);
 
     // Guardar datos antes de salir
     if (guardar_datajuego(&j, &b, &jv) == -1) {

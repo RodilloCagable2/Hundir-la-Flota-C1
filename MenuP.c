@@ -172,261 +172,399 @@ int guardar_barcos(bar_vect *b) {
 
 //JUEGO:
 int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
-	char filename[] = "Juego.txt";
-	int i = 0, fila, colum;
-	char cad_linea[250];
-	int campo_juego = 0;
-	char default_jue[] = "03-01-1\nS-01\n1-Defaultname1-000-M-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~\n2-Defaultname2-000-A-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~";
+    FILE *f_jue = NULL;
+    char filename[] = "Juego.txt";
+    char cad_linea[250];
+    char default_jue[] = "03-01-1\nS-01\n1-Defaultname1-000-M-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~\n2-Defaultname2-000-A-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~";
+    int i, fila, colum, campo_juego, len_linea;
 
-	FILE *f_jue = fopen(filename, "r");
+    // Intentar abrir el archivo
+    f_jue = fopen(filename, "r");
 
-	if (f_jue == NULL) {
-		f_jue = fopen(filename, "w");
-		if (f_jue == NULL) {
-			perror("Error al crear el archivo de juego");
-			return -1;
-		}
-		fprintf(f_jue, "%s\n", default_jue);
-		fclose(f_jue);
-		f_jue = fopen(filename, "r");
-		if (f_jue == NULL) {
-			perror("Error al abrir el archivo de juego");
-			return -1;
-		}
-	}
+    if (f_jue == NULL) {
+        // Crear archivo con contenido por defecto
+        f_jue = fopen(filename, "w");
+        if (f_jue == NULL) {
+            perror("Error al crear el archivo de juego");
+            return -1;
+        }
+        fprintf(f_jue, "%s\n", default_jue);
+        fclose(f_jue);
+        f_jue = fopen(filename, "r");
+        if (f_jue == NULL) {
+            perror("Error al abrir el archivo de juego");
+            return -1;
+        }
+    }
 
-	// Verificar si el archivo está vacío
-	if (fgetc(f_jue) == EOF) {
-		fclose(f_jue);
-		f_jue = fopen(filename, "w");
-		if (f_jue == NULL) {
-			perror("Error al abrir el archivo de juego");
-			return -1;
-		}
-		fprintf(f_jue, "%s\n", default_jue);
-		fclose(f_jue);
-		f_jue = fopen(filename, "r");
-		if (f_jue == NULL) {
-			perror("Error al abrir el archivo de juego");
-			return -1;
-		}
-	} else {
-		rewind(f_jue);
-	}
+    // Verificar si el archivo está vacío
+    if (fgetc(f_jue) == EOF) {
+        fclose(f_jue);
+        f_jue = fopen(filename, "w");
+        if (f_jue == NULL) {
+            perror("Error al crear el archivo de juego");
+            return -1;
+        }
+        fprintf(f_jue, "%s\n", default_jue);
+        fclose(f_jue);
+        f_jue = fopen(filename, "r");
+        if (f_jue == NULL) {
+            perror("Error al abrir el archivo de juego");
+            return -1;
+        }
+    } else {
+        rewind(f_jue);
+    }
 
-	// Inicializar estructura juego
-	j->num_tipo_bar = b->num_tipo_bar;
-	j->tam_tablero = 3;
+    // Leer cabecera del juego
+    if (fgets(cad_linea, sizeof(cad_linea), f_jue)) {
+        campo_juego = sscanf(cad_linea, "%d-%d-%d", &j->tam_tablero, &j->num_total_bar, &j->num_tipo_bar);
+        if (campo_juego != 3 || j->tam_tablero <= 0) {
+            printf("Error en el formato o tamaño inválido en los datos del juego\n");
+            fclose(f_jue);
+            return -1;
+        }
+    }
 
-	j->num_bar_tipo = (int*)malloc(j->num_tipo_bar * sizeof(int));
-	if (j->num_bar_tipo == NULL) {
-		perror("Error al asignar memoria para num_bar_tipo");
-		fclose(f_jue);
-		return -1;
-	}
+    // Asignar memoria para cantidad de barcos
+    j->num_bar_tipo = (int*)malloc(j->num_tipo_bar * sizeof(int));
+    if (j->num_bar_tipo == NULL) {
+        perror("Error al asignar memoria para num_bar_tipo");
+        fclose(f_jue);
+        return -1;
+    }
 
-	// Asignar memoria para los tableros
-	for (i = 0; i < 2; i++) {
-		jv->jug[i].tablero1 = (char**)malloc(j->tam_tablero * sizeof(char*));
-		if (jv->jug[i].tablero1 == NULL) {
-			perror("Error al asignar memoria para tablero1");
-			liberar_tableros(jv, j->tam_tablero);
-			liberar_juego(j);
-			fclose(f_jue);
-			return -1;
-		}
+    // Cargar información de tipos de barcos
+    for (i = 0; i < j->num_tipo_bar; i++) {
+        if (!fgets(cad_linea, sizeof(cad_linea), f_jue)) {
+            printf("Error: Datos de barcos incompletos\n");
+            liberar_juego(j);
+            fclose(f_jue);
+            return -1;
+        }
+        campo_juego = sscanf(cad_linea, "%c-%d", &b->bar[i].id_barco, &j->num_bar_tipo[i]);
+        if (campo_juego != 2) {
+            printf("Error en el formato de los datos de los barcos\n");
+            liberar_juego(j);
+            fclose(f_jue);
+            return -1;
+        }
+    }
 
-		for (fila = 0; fila < j->tam_tablero; fila++) {
-			jv->jug[i].tablero1[fila] = (char*)malloc(j->tam_tablero * sizeof(char));
-			if (jv->jug[i].tablero1[fila] == NULL) {
-				perror("Error al asignar memoria para fila de tablero1");
-				liberar_tableros(jv, j->tam_tablero);
-				liberar_juego(j);
-				fclose(f_jue);
-				return -1;
-			}
-		}
+    // Reservar memoria para tableros de los jugadores
+    for (i = 0; i < 2; i++) {
+        jv->jug[i].tablero1 = (char**)malloc(j->tam_tablero * sizeof(char*));
+        jv->jug[i].tablero2 = (char**)malloc(j->tam_tablero * sizeof(char*));
 
-		jv->jug[i].tablero2 = (char**)malloc(j->tam_tablero * sizeof(char*));
-		if (jv->jug[i].tablero2 == NULL) {
-			perror("Error al asignar memoria para tablero2");
-			liberar_tableros(jv, j->tam_tablero);
-			liberar_juego(j);
-			fclose(f_jue);
-			return -1;
-		}
+        if (jv->jug[i].tablero1 == NULL || jv->jug[i].tablero2 == NULL) {
+            perror("Error al asignar memoria para tableros");
+            liberar_tableros(jv, j->tam_tablero);
+            liberar_juego(j);
+            fclose(f_jue);
+            return -1;
+        }
 
-		for (fila = 0; fila < j->tam_tablero; fila++) {
-			jv->jug[i].tablero2[fila] = (char*)malloc(j->tam_tablero * sizeof(char));
-			if (jv->jug[i].tablero2[fila] == NULL) {
-				perror("Error al asignar memoria para fila de tablero2");
-				liberar_tableros(jv, j->tam_tablero);
-				liberar_juego(j);
-				fclose(f_jue);
-				return -1;
-			}
-		}
-	}
+        for (fila = 0; fila < j->tam_tablero; fila++) {
+            jv->jug[i].tablero1[fila] = (char*)malloc(j->tam_tablero * sizeof(char));
+            jv->jug[i].tablero2[fila] = (char*)malloc(j->tam_tablero * sizeof(char));
+            if (jv->jug[i].tablero1[fila] == NULL || jv->jug[i].tablero2[fila] == NULL) {
+                perror("Error al asignar memoria para filas de tableros");
+                liberar_tableros(jv, j->tam_tablero);
+                liberar_juego(j);
+                fclose(f_jue);
+                return -1;
+            }
+        }
+    }
 
-	// Cargar datos del juego
-	if (fgets(cad_linea, sizeof(cad_linea), f_jue)) {
-		campo_juego = sscanf(cad_linea, "%d-%d-%d",
-			&j->tam_tablero,
-			&j->num_total_bar,
-			&j->num_tipo_bar);
+    // Cargar información de los jugadores
+    for (i = 0; i < 2; i++) {
+        if (!fgets(cad_linea, sizeof(cad_linea), f_jue)) {
+            printf("Error: Datos de jugador %d incompletos\n", i + 1);
+            liberar_tableros(jv, j->tam_tablero);
+            liberar_juego(j);
+            fclose(f_jue);
+            return -1;
+        }
+        campo_juego = sscanf(cad_linea, "%d-%21[^-]-%d-%c-%d",
+            &jv->jug[i].id_jug,
+            jv->jug[i].nomb_jug,
+            &jv->jug[i].num_disp,
+            &jv->jug[i].tipo_disp,
+            &jv->jug[i].ganador);
 
-		if (campo_juego != 3) {
-			printf("Error en el formato de los datos del juego\n");
-			liberar_tableros(jv, j->tam_tablero);
-			liberar_juego(j);
-			fclose(f_jue);
-			return -1;
-		}
-	}
+        if (campo_juego != 5 || !validar_nombre(jv->jug[i].nomb_jug)) {
+            printf("Error en los datos del jugador %d\n", i + 1);
+            liberar_tableros(jv, j->tam_tablero);
+            liberar_juego(j);
+            fclose(f_jue);
+            return -1;
+        }
 
-	// Cargar datos de los barcos
-	for (i = 0; i < j->num_tipo_bar; i++) {
-		if (fgets(cad_linea, sizeof(cad_linea), f_jue)) {
-			campo_juego = sscanf(cad_linea, "%c-%d",
-				&b->bar[i].id_barco,
-				&j->num_bar_tipo[i]);
+        // Cargar tablero1
+        for (fila = 0; fila < j->tam_tablero; fila++) {
+            if (!fgets(cad_linea, sizeof(cad_linea), f_jue)) {
+                printf("Error: Datos incompletos en tablero1 del jugador %d\n", i + 1);
+                liberar_tableros(jv, j->tam_tablero);
+                liberar_juego(j);
+                fclose(f_jue);
+                return -1;
+            }
+            len_linea = strlen(cad_linea);
+            if (len_linea < j->tam_tablero) {
+                printf("Error: Línea de tablero1 muy corta para el jugador %d\n", i + 1);
+                liberar_tableros(jv, j->tam_tablero);
+                liberar_juego(j);
+                fclose(f_jue);
+                return -1;
+            }
+            for (colum = 0; colum < j->tam_tablero; colum++) {
+                jv->jug[i].tablero1[fila][colum] = cad_linea[colum];
+            }
+        }
 
-			if (campo_juego != 2) {
-				printf("Error en el formato de los datos de los barcos\n");
-				liberar_tableros(jv, j->tam_tablero);
-				liberar_juego(j);
-				fclose(f_jue);
-				return -1;
-			}
-		}
-	}
+        // Cargar tablero2
+        for (fila = 0; fila < j->tam_tablero; fila++) {
+            if (!fgets(cad_linea, sizeof(cad_linea), f_jue)) {
+                printf("Error: Datos incompletos en tablero2 del jugador %d\n", i + 1);
+                liberar_tableros(jv, j->tam_tablero);
+                liberar_juego(j);
+                fclose(f_jue);
+                return -1;
+            }
+            len_linea = strlen(cad_linea);
+            if (len_linea < j->tam_tablero) {
+                printf("Error: Línea de tablero2 muy corta para el jugador %d\n", i + 1);
+                liberar_tableros(jv, j->tam_tablero);
+                liberar_juego(j);
+                fclose(f_jue);
+                return -1;
+            }
+            for (colum = 0; colum < j->tam_tablero; colum++) {
+                jv->jug[i].tablero2[fila][colum] = cad_linea[colum];
+            }
+        }
+    }
 
-	// Cargar datos de los jugadores
-	for (i = 0; i < 2; i++) {
-		if (fgets(cad_linea, sizeof(cad_linea), f_jue)) {
-			campo_juego = sscanf(cad_linea, "%d-%21[^-]-%d-%c-%d",
-				&jv->jug[i].id_jug,
-				jv->jug[i].nomb_jug,
-				&jv->jug[i].num_disp,
-				&jv->jug[i].tipo_disp,
-				&jv->jug[i].ganador);
-
-			if (campo_juego != 5 || !validar_nombre(jv->jug[i].nomb_jug)) {
-				printf("Error en los datos del jugador %d\n", i + 1);
-				liberar_tableros(jv, j->tam_tablero);
-				liberar_juego(j);
-				fclose(f_jue);
-				return -1;
-			}
-		}
-
-		// Cargar tableros
-		for (fila = 0; fila < j->tam_tablero; fila++) {
-			if (fgets(cad_linea, sizeof(cad_linea), f_jue)) {
-				for (colum = 0; colum < j->tam_tablero; colum++) {
-					jv->jug[i].tablero1[fila][colum] = cad_linea[colum];
-				}
-			}
-		}
-
-		for (fila = 0; fila < j->tam_tablero; fila++) {
-			if (fgets(cad_linea, sizeof(cad_linea), f_jue)) {
-				for (colum = 0; colum < j->tam_tablero; colum++) {
-					jv->jug[i].tablero2[fila][colum] = cad_linea[colum];
-				}
-			}
-		}
-	}
-
-	fclose(f_jue);
-	return 0;
+    fclose(f_jue);
+    return 0;
 }
 
 int guardar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
-	int i, fila, colum;
-	FILE *f_jue;
-	char filename[] = "Juego.txt";
+    FILE *f_jue = NULL;
+    char filename[] = "Juego.txt";
+    int i, fila, colum;
 
-	f_jue = fopen(filename, "w");
-	if (f_jue == NULL) {
-		perror("Error al abrir el archivo de juego");
-		return -1;
-	}
+    // Abrir archivo en modo escritura
+    f_jue = fopen(filename, "w");
+    if (f_jue == NULL) {
+        perror("Error al abrir el archivo de juego");
+        return -1;
+    }
 
-	// Guardar datos del juego
-	if (fprintf(f_jue, "%02d-%02d-%d\n",
-		j->tam_tablero,
-		j->num_total_bar,
-		j->num_tipo_bar) < 0) {
-		perror("Error al escribir en el archivo de juego");
-		fclose(f_jue);
-		return -1;
-	}
+    // Guardar datos generales del juego
+    if (fprintf(f_jue, "%02d-%02d-%d\n", j->tam_tablero, j->num_total_bar, j->num_tipo_bar) < 0) {
+        perror("Error al escribir datos generales del juego");
+        fclose(f_jue);
+        return -1;
+    }
 
-	// Guardar datos de los barcos
-	for (i = 0; i < j->num_tipo_bar; i++) {
-		if (fprintf(f_jue, "%c-%02d\n",
-			b->bar[i].id_barco,
-			j->num_bar_tipo[i]) < 0) {
-			perror("Error al escribir en el archivo de juego");
-			fclose(f_jue);
-			return -1;
-		}
-	}
+    // Guardar datos de los tipos de barcos
+    for (i = 0; i < j->num_tipo_bar; i++) {
+        if (fprintf(f_jue, "%c-%02d\n", b->bar[i].id_barco, j->num_bar_tipo[i]) < 0) {
+            perror("Error al escribir datos de barcos");
+            fclose(f_jue);
+            return -1;
+        }
+    }
 
-	// Guardar datos de los jugadores
-	for (i = 0; i < 2; i++) {
-		if (fprintf(f_jue, "%d-%s-%03d-%c-%d\n",
-			jv->jug[i].id_jug,
-			jv->jug[i].nomb_jug,
-			jv->jug[i].num_disp,
-			jv->jug[i].tipo_disp,
-			jv->jug[i].ganador) < 0) {
-			perror("Error al escribir en el archivo de juego");
-			fclose(f_jue);
-			return -1;
-		}
+    // Guardar datos de los jugadores
+    for (i = 0; i < 2; i++) {
+        if (fprintf(f_jue, "%d-%s-%03d-%c-%d\n",
+            jv->jug[i].id_jug,
+            jv->jug[i].nomb_jug,
+            jv->jug[i].num_disp,
+            jv->jug[i].tipo_disp,
+            jv->jug[i].ganador) < 0) {
+            perror("Error al escribir datos de jugadores");
+            fclose(f_jue);
+            return -1;
+        }
 
-		// Guardar tableros
-		for (fila = 0; fila < j->tam_tablero; fila++) {
-			for (colum = 0; colum < j->tam_tablero; colum++) {
-				if (fprintf(f_jue, "%c", jv->jug[i].tablero1[fila][colum]) < 0) {
-					perror("Error al escribir en el archivo de juego");
-					fclose(f_jue);
-					return -1;
-				}
-			}
-			if (fprintf(f_jue, "\n") < 0) {
-				perror("Error al escribir en el archivo de juego");
-				fclose(f_jue);
-				return -1;
-			}
-		}
+        // Guardar tablero1 del jugador
+        for (fila = 0; fila < j->tam_tablero; fila++) {
+            for (colum = 0; colum < j->tam_tablero; colum++) {
+                if (fprintf(f_jue, "%c", jv->jug[i].tablero1[fila][colum]) < 0) {
+                    perror("Error al escribir tablero1");
+                    fclose(f_jue);
+                    return -1;
+                }
+            }
+            if (fprintf(f_jue, "\n") < 0) {
+                perror("Error al escribir salto de línea en tablero1");
+                fclose(f_jue);
+                return -1;
+            }
+        }
 
-		for (fila = 0; fila < j->tam_tablero; fila++) {
-			for (colum = 0; colum < j->tam_tablero; colum++) {
-				if (fprintf(f_jue, "%c", jv->jug[i].tablero2[fila][colum]) < 0) {
-					perror("Error al escribir en el archivo de juego");
-					fclose(f_jue);
-					return -1;
-				}
-			}
-			if (fprintf(f_jue, "\n") < 0) {
-				perror("Error al escribir en el archivo de juego");
-				fclose(f_jue);
-				return -1;
-			}
-		}
-	}
+        // Guardar tablero2 del jugador
+        for (fila = 0; fila < j->tam_tablero; fila++) {
+            for (colum = 0; colum < j->tam_tablero; colum++) {
+                if (fprintf(f_jue, "%c", jv->jug[i].tablero2[fila][colum]) < 0) {
+                    perror("Error al escribir tablero2");
+                    fclose(f_jue);
+                    return -1;
+                }
+            }
+            if (fprintf(f_jue, "\n") < 0) {
+                perror("Error al escribir salto de línea en tablero2");
+                fclose(f_jue);
+                return -1;
+            }
+        }
+    }
 
-	fclose(f_jue);
-	return 0;
+    // Cerrar archivo
+    fclose(f_jue);
+    return 0;
 }
 
-//RESUMEN:
+//FUNCIONES VARIAS:
 void resumen_partida() {
 
 }
+
+int cambiar_tam_tablero(juego *j, bar_vect *b, jug_vect *jv) {
+    int i, fila, colum, nuevo_tam;
+    char resp;
+    char *nueva_fila = NULL;
+    char **nuevo_tablero1 = NULL;
+    char **nuevo_tablero2 = NULL;
+    
+    clear();
+
+    printf("Las dimensiones actuales del tablero son: %dx%d", j->tam_tablero, j->tam_tablero);
+    printf("\nDeseas actualizar el tamano del tablero? (S/N): ");
+    scanf("%c", &resp);
+    fflush(stdin);
+    confirmacion(&resp);
+
+    if (resp == 'S' || resp == 's') {
+        printf("\n\nIntroduce el nuevo tamano del tablero (3-26): ");
+        scanf("%d", &nuevo_tam);
+        fflush(stdin);
+
+        while (nuevo_tam < 3 || nuevo_tam > 26) {
+            printf("\n\nEl tamano introducido no es valido, introduce un valor entre 3 y 26: ");
+            scanf("%d", &nuevo_tam);
+            fflush(stdin);
+        }
+
+        // Para cada jugador
+        for (i = 0; i < 2; i++) {
+            // Reasignar memoria para tablero1
+            nuevo_tablero1 = (char**)realloc(jv->jug[i].tablero1, nuevo_tam * sizeof(char*));
+            
+            if (nuevo_tablero1 == NULL) {
+                printf("\nError al reasignar memoria para el tablero1");
+                return -1;
+            }
+            
+            jv->jug[i].tablero1 = nuevo_tablero1;
+
+            for (fila = 0; fila < nuevo_tam; fila++) {
+                if (fila >= j->tam_tablero) {
+                    // Nueva fila
+                    jv->jug[i].tablero1[fila] = (char*)malloc(nuevo_tam * sizeof(char));
+                    
+                    if (jv->jug[i].tablero1[fila] == NULL) {
+                        printf("\nError al asignar nueva fila en tablero1");
+                        return -1;
+                    }
+                    
+                    for (colum = 0; colum < nuevo_tam; colum++) {
+                        jv->jug[i].tablero1[fila][colum] = '~';
+                    }
+                } 
+				else {
+                    // Fila existente, ampliar columnas
+                    nueva_fila = (char*)realloc(jv->jug[i].tablero1[fila], nuevo_tam * sizeof(char));
+                    
+                    if (nueva_fila == NULL) {
+                        printf("\nError al reasignar fila en tablero1");
+                        return -1;
+                    }
+                    
+                    jv->jug[i].tablero1[fila] = nueva_fila;
+                    
+                    for (colum = j->tam_tablero; colum < nuevo_tam; colum++) {
+                        jv->jug[i].tablero1[fila][colum] = '~';
+                    }
+                }
+            }
+
+            // Reasignar memoria para tablero2
+            nuevo_tablero2 = (char**)realloc(jv->jug[i].tablero2, nuevo_tam * sizeof(char*));
+            
+            if (nuevo_tablero2 == NULL) {
+                printf("\nError al reasignar memoria para el tablero2");
+                return -1;
+            }
+            
+            jv->jug[i].tablero2 = nuevo_tablero2;
+
+            for (fila = 0; fila < nuevo_tam; fila++) {
+                if (fila >= j->tam_tablero) {
+                    // Nueva fila
+                    jv->jug[i].tablero2[fila] = (char*)malloc(nuevo_tam * sizeof(char));
+                    
+                    if (jv->jug[i].tablero2[fila] == NULL) {
+                        printf("\nError al asignar nueva fila en tablero2");
+                        return -1;
+                    }
+                    
+                    for (colum = 0; colum < nuevo_tam; colum++) {
+                        jv->jug[i].tablero2[fila][colum] = '~';
+                    }
+                } 
+				else {
+                    // Fila existente, ampliar columnas
+                    nueva_fila = (char*)realloc(jv->jug[i].tablero2[fila], nuevo_tam * sizeof(char));
+                    
+                    if (nueva_fila == NULL) {
+                        printf("\nError al reasignar fila en tablero2");
+                        return -1;
+                    }
+                    
+                    jv->jug[i].tablero2[fila] = nueva_fila;
+                    
+                    for (colum = j->tam_tablero; colum < nuevo_tam; colum++) {
+                        jv->jug[i].tablero2[fila][colum] = '~';
+                    }
+                }
+            }
+        }
+
+        // Actualizar tamaño del tablero
+        j->tam_tablero = nuevo_tam;
+
+        // Guardar cambios
+        if (guardar_datajuego(j, b, jv) == -1) {
+            return -1;
+        }
+    } 
+	else {
+        printf("\nVolviendo al menu principal...\n");
+        Sleep(1000);
+
+        if (menu_principal(j, b, jv) == -1) {
+            return -1;
+        }
+    }
+
+    return 0;
+}
+
 
 //MENÚS:
 int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
@@ -451,7 +589,8 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 		switch (op) {
 			case 1:
 				//Función que contiende todas las funciones para la introducción de datos
-				intro_dat(jv,j,b);
+				cambiar_tam_tablero(j, b, jv);
+				//intro_dat(jv, j, b);
 				break;
 
 			case 2:
@@ -461,7 +600,7 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 				do{
                     scanf("%i",&op2);
                     fflush(stdin);
-				}while(op2!=1 || op2!=2 || op!=3);
+				}while(op2 != 1 || op2 != 2 || op != 3);
 				
 				switch(op2){
 				    case 1:
@@ -507,14 +646,23 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 				printf("Seleccione una opcion valida: ");
 				break;
 		}
-
+		
 		if (op != 6) {
 			printf("\nDeseas hacer algo mas? (S/N): ");
 			scanf("%c", &resp);
+			fflush(stdin);
 			confirmacion(&resp);
 			clear();
 		}
-	} while (op != 6 && (resp == 'S' || resp == 's'));
+		if (resp == 'N' || resp == 'n') {
+			printf("\nVolviendo al menu principal...\n");
+			Sleep(1000);
+
+			if (menu_principal(j, b, jv) == -1) {
+				return -1;
+			}
+		}
+	}while (op != 6 && (resp == 'S' || resp == 's'));
 
 	return 0;
 }
@@ -566,10 +714,19 @@ int menu_partida(juego *j, bar_vect *b, jug_vect *jv) {
 		if (op != 4) {
 			printf("\nDeseas hacer algo mas? (S/N): ");
 			scanf("%c", &resp);
+			fflush(stdin);
 			confirmacion(&resp);
 			clear();
 		}
-	} while (op != 4 && (resp == 'S' || resp == 's'));
+		if (resp == 'N' || resp == 'n') {
+			printf("\nVolviendo al menu principal...\n");
+			Sleep(1000);
+
+			if (menu_principal(j, b, jv) == -1) {
+				return -1;
+			}
+		}
+	}while (op != 4 && (resp == 'S' || resp == 's'));
 
 	return 0;
 }
@@ -617,10 +774,11 @@ int menu_principal(juego *j, bar_vect *b, jug_vect *jv) {
 		if (op != 3) {
 			printf("\nDesea hacer algo mas? (S/N): ");
 			scanf("%c", &resp);
+			fflush(stdin);
 			confirmacion(&resp);
 			clear();
 		}
-	} while (op != 3 && (resp == 'S' || resp == 's'));
+	}while (op != 3 && (resp == 'S' || resp == 's'));
 
 	return 0;
 }

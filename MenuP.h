@@ -106,9 +106,11 @@ int cargar_datajuego(juego *, bar_vect *, jug_vect *);
 //POSCONDICIÓN: Devuelve 0 si el guardado fue exitoso, -1 si hubo error
 int guardar_datajuego(juego *, bar_vect *, jug_vect *);
 
-//---> RESUMEN: <---
+//---> FUNCIONES VARIAS: <---
 
 void resumen_partida();
+
+int cambiar_tam_tablero(juego *, bar_vect *, jug_vect *);
 
 //---> MENÚS: <---
 

@@ -56,6 +56,10 @@ void moverCursor(char input, int *cursorX, int *cursorY, int tam_vector) {
         case 's': if (*cursorY < tam_vector - 1) (*cursorY)++; break;
         case 'a': if (*cursorX > 0) (*cursorX)--; break;
         case 'd': if (*cursorX < tam_vector - 1) (*cursorX)++; break;
+        case 'W': if (*cursorY > 0) (*cursorY)--; break;
+        case 'S': if (*cursorY < tam_vector - 1) (*cursorY)++; break;
+        case 'A': if (*cursorX > 0) (*cursorX)--; break;
+        case 'D': if (*cursorX < tam_vector - 1) (*cursorX)++; break;
     }
 }
 
@@ -101,20 +105,37 @@ int tocadoHundido(int cursorX, int cursorY, jug_vect *jv, int turno, int turnoOp
 // Precondición: Variables no nulas
 // Postcondición: Modifica en el tablero del jugador dado las casillas tocadas por casillas hundidas
 void actualizarHundido(int cursorX, int cursorY, jug_vect *jv, int turno, int turnoOpuesto, int tamTablero, int barcosRestantes[]) {
-    int dx, dy, x, y; // Variables para manejar direcciones
+    int dx, dy, x, y, x2, y2; // Variables para manejar direcciones
 
     // Recorremos las 8 direcciones sin necesidad de una matriz
     for (dx = -1; dx <= 1; dx++) {
         for (dy = -1; dy <= 1; dy++) {
             x = cursorX + dx;
             y = cursorY + dy;
+            
             if ((x >= 0) && (x < tamTablero) && (y >= 0) && (y < tamTablero) && (jv->jug[turnoOpuesto].tablero1[y][x] == 'X')) {
                 // Seguir avanzando en la misma dirección
                 jv->jug[turno].tablero2[y][x] = 'H';
+                for(x2 = -1; x2 <= 1; x2++){ // Cambia las casillas '~' adyascentes de X por O
+                    	for(y2 = -1; y2 <= 1; y2++){
+                    		if (((x2 + x) >= 0) && ((x2 + x) < tamTablero) && ((y2 + y) >= 0) && ((y2 + y) < tamTablero) &&
+    							(jv->jug[turnoOpuesto].tablero1[y + y2][x + x2] == '~')) {
+    							jv->jug[turno].tablero2[y + y2][x + x2] = 'O';
+							}
+						}
+					}
                 while ((x += dx) >= 0 && x < tamTablero &&
                        (y += dy) >= 0 && y < tamTablero &&
                        jv->jug[turno].tablero2[y][x] == 'X') {
                     jv->jug[turno].tablero2[y][x] = 'H';
+                    for(x2 = -1; x2 <= 1; x2++){ // // Cambia las casillas '~' adyascentes de X por O
+                    	for(y2 = -1; y2 <= 1; y2++){
+                    		if (((x2 + x) >= 0) && ((x2 + x) < tamTablero) && ((y2 + y) >= 0) && ((y2 + y) < tamTablero) &&
+    							(jv->jug[turnoOpuesto].tablero1[y + y2][x + x2] == '~')) {
+    							jv->jug[turno].tablero2[y + y2][x + x2] = 'O';
+							}
+						}
+					}
                 }
             }
         }
@@ -133,7 +154,7 @@ void apuntarJugador(int *cursorX, int *cursorY, jug_vect *jv, int tam_vector, in
     imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
     input = getch();
 
-    if (input == 'w' || input == 'a' || input == 's' || input == 'd') {
+    if (input == 'w' || input == 'a' || input == 's' || input == 'd' || input == 'W' || input == 'A' || input == 'S' || input == 'D') {
         moverCursor(input, cursorX, cursorY, tam_vector);
     } else if ((input == ' ') && (jv->jug[*turno].tablero2[*cursorY][*cursorX] == '~')) { // Impide progresar si la casilla seleccionada ya ha sido revelada
         char *casilla = &jv->jug[*turnoOpuesto].tablero1[*cursorY][*cursorX];
