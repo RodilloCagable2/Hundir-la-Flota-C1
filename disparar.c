@@ -181,7 +181,7 @@ void actualizarHundido(int cursorX, int cursorY, jug_vect *jv, int turno, int tu
                     	for(y2 = -1; y2 <= 1; y2++){
                     		if (((x2 + x) >= 0) && ((x2 + x) < tamTablero) && ((y2 + y) >= 0) && ((y2 + y) < tamTablero) &&
     							(jv->jug[turnoOpuesto].tablero1[y + y2][x + x2] == '~')) {
-    							jv->jug[turno].tablero2[y + y2][x + x2] = 'O';
+    							jv->jug[turno].tablero2[y + y2][x + x2] = '*';
 							}
 						}
 					}
@@ -193,7 +193,7 @@ void actualizarHundido(int cursorX, int cursorY, jug_vect *jv, int turno, int tu
                     	for(y2 = -1; y2 <= 1; y2++){
                     		if (((x2 + x) >= 0) && ((x2 + x) < tamTablero) && ((y2 + y) >= 0) && ((y2 + y) < tamTablero) &&
     							(jv->jug[turnoOpuesto].tablero1[y + y2][x + x2] == '~')) {
-    							jv->jug[turno].tablero2[y + y2][x + x2] = 'O';
+    							jv->jug[turno].tablero2[y + y2][x + x2] = '*';
 							}
 						}
 					}
@@ -225,11 +225,11 @@ void apuntarJugador(int *cursorX, int *cursorY, jug_vect *jv, int tam_vector, in
             valTocado = tocadoHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector);
             if(valTocado == 0) {
                 actualizarHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector, barcosRestantes);
-                jv->jug[*turno].ganador += 1;
+                //jv->jug[*turno].ganador += 1;
             }
             imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
         } else {
-            jv->jug[*turno].tablero2[*cursorY][*cursorX] = 'O';
+            jv->jug[*turno].tablero2[*cursorY][*cursorX] = '*';
             imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
             *turno = 1 - *turno;
             *turnoOpuesto = 1 - *turnoOpuesto;
@@ -303,7 +303,7 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
             imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
             Sleep(100);
         } else {
-            jv->jug[*turno].tablero2[*cursorY][*cursorX] = 'O';
+            jv->jug[*turno].tablero2[*cursorY][*cursorX] = '*';
             imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
             *turno = 1 - *turno;
             *turnoOpuesto = 1 - *turnoOpuesto;
@@ -350,7 +350,7 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
                 jv->jug[*turno].num_disp++;
             } while (jv->jug[*turnoOpuesto].tablero1[*cursorY][*cursorX] == 'X');
         } else {
-            jv->jug[*turno].tablero2[*cursorY][*cursorX] = 'O';
+            jv->jug[*turno].tablero2[*cursorY][*cursorX] = '*';
             imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
             *turno = 1 - *turno;
             *turnoOpuesto = 1 - *turnoOpuesto;
@@ -364,7 +364,7 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
 // Precondición: Recibo los registros de jugadores y de barcos
 // Postcondición: modifica la información de los jugadores
 void disparar_jue(jug_vect *jv, bar_vect *bv, juego *j) {
-    system("cls");
+    clear();
     srand(time(NULL));
 
     int cursorX[2] = {0, 0}, cursorY[2] = {0, 0}; // Cursores de cada jugador
@@ -374,7 +374,7 @@ void disparar_jue(jug_vect *jv, bar_vect *bv, juego *j) {
     int barcosRestantes[2] = {j->num_total_bar, j->num_total_bar};
 
     while (jv->jug[turno].ganador == 0) {
-        guardar_datajuego(j, bv, jv);
+    	guardar_datajuego(j, bv, jv);
         if (jv->jug[turno].tipo_disp == 'M') {
             apuntarJugador(&cursorX[turno], &cursorY[turno], jv, j->tam_tablero, &turno, &turnoOpuesto, barcosRestantes);
         } else {

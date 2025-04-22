@@ -108,7 +108,11 @@ int guardar_datajuego(juego *, bar_vect *, jug_vect *);
 
 //---> FUNCIONES VARIAS: <---
 
-void resumen_partida();
+void color(int);
+
+// PRECONDICIÓN: j y jv deben ser punteros válidos que apunten a estructuras correctamente inicializadas
+// POSCONDICIÓN: Muestra en pantalla un resumen de la partida con estadísticas de disparos, aciertos y tablero final
+void resumen_partida(juego *, jug_vect *);
 
 int cambiar_tam_tablero(juego *, bar_vect *, jug_vect *);
 

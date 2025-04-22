@@ -18,7 +18,7 @@ void jug_colocar_barcos(bar_vect *v_barcos, juego *jug, jug_vect *j_vect){
     printf("COLOCAR BARCOS");
     for(i=0;i<2;i++){
         
-        id=j_vect->jug[i].id_jug;
+        id=j_vect->jug[i].id_jug - 1;
         d=j_vect->jug[i].tipo_disp;
         //printf("tipo disparo: %c", d);
         if(d=='M'){

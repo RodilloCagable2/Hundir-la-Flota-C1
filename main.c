@@ -1,11 +1,9 @@
-#include "MenuP.h"
+#include <windows.h> // Importante para SetConsoleOutputCP
+#include "MenuP.h" 
 #include "Complementos.h"
 #include "Configuracion.h"
 #include "IntDatos.h"
 #include "disparar.h"
-
-
-/* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
 int main() {
     int resultado;
@@ -13,7 +11,10 @@ int main() {
     bar_vect b;
     jug_vect jv;
 
-    // Inicializar estructuras
+    // Configurar la consola para que acepte caracteres especiales (UTF-8)
+    SetConsoleOutputCP(CP_UTF8);
+
+    // Inicializar estructuras a 0
     memset(&j, 0, sizeof(juego));
     memset(&b, 0, sizeof(bar_vect));
     memset(&jv, 0, sizeof(jug_vect));
@@ -29,9 +30,9 @@ int main() {
         liberar_barcos(&b);
         return -1;
     }
-	
-	//disparar_jue(&jv, &b, &j);
-	
+
+    //disparar_jue(&jv, &b, &j); // (comentado para pruebas o posterior uso)
+
     // Ejecutar menú principal
     resultado = menu_principal(&j, &b, &jv);
 
@@ -44,7 +45,7 @@ int main() {
         printf("Error al guardar los barcos\n");
     }
 
-    // Liberar memoria
+    // Liberar memoria usada
     liberar_tableros(&jv, j.tam_tablero);
     liberar_barcos(&b);
     liberar_juego(&j);

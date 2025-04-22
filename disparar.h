@@ -8,6 +8,7 @@
 #include <windows.h>
 #include <time.h>
 #include "MenuP.h"
+#include "Complementos.h"
 
 // Cabecera: int numeroAleatorio(int)
 // Precondición: variables no nulas
@@ -19,7 +20,7 @@ int numeroAleatorio(int);
 // Postcondición: devuelve un número aleatorio acotado al tamaño del tablero
 void moverCursorConsola(int, int);
 
-// Cabecera imprimirtablero(int, int, int, jug_vect *, int)
+// Cabecera imprimirtablero(int, int, int, int, jug_vect *, int)
 // Precondición: Variables no nulas
 // Postcondición: imprime el estado actual del tablero dependiendo del turno actual
 void imprimirtablero(int, int, int, int, jug_vect *, int);
@@ -44,7 +45,7 @@ void actualizarHundido(int, int, jug_vect *, int, int, int, int []);
 // Postcondición: Modifica el tablero del jugador cuándo se cumplen las condiciones
 void apuntarJugador(int *, int *, jug_vect *, int, int *, int *, int []);
 
-// Cabecera: desplazarCpu(int *, int *, int *, int *, int, jug_vect *, int)
+// Cabecera: desplazarCpu(int *, int *, int *, int *, int, int, jug_vect *, int)
 // Precondición: Variables no nulas
 // Postcondición: Modifica la posición de la Cpu paso a paso dada la posición final que deberá tomar dicho valor
 void desplazarCpu(int *, int *, int *, int *, int, int, jug_vect *, int);

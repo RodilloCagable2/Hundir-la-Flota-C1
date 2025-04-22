@@ -3,6 +3,18 @@
 #include "Configuracion.h"
 #include "IntDatos.h"
 #include "disparar.h"
+#define VERDE 2
+#define ROJO 4
+#define AMARILLO 6
+#define BLANCO 7
+#define AZUL 9
+#define VERDE_ROJO 36 //164
+#define VERDE_BLANCO 39 //167
+#define VERDE_VERDE 34 //170
+#define ROJO_ROJO 68
+#define ROJO_BLANCO 71
+#define AZUL_AZUL 153
+#define AZUL_BLANCO 159
 
 //GESTIÓN DE MEMORIA:
 void liberar_tableros(jug_vect *jv, int tam_tablero) {
@@ -52,122 +64,140 @@ int validar_nombre(const char *nombre) {
 }
 
 int validar_id_barco(char id) {
-	return (id >= 'A' && id <= 'Z');
+	if (id >= 'A' && id <= 'Z') {
+		return 1;
+	}
+	return 0;
 }
 
 int validar_tam_barco(int tam) {
-	return (tam > 0 && tam <= 5);
+	if (tam > 0) {
+		return 1;
+	}
+	return 0;
 }
 
 //BARCOS:
 int cargar_barcos(bar_vect *b) {
-	char filename[] = "Barcos.txt";
-	int num_tipo_bar = 0;
-	int i = 0;
-	char cad_linea[250];
-	int campo_barcos = 0;
-	char default_bar[] = "Defaultname-D-1";
+    FILE *f_bar = NULL;
+    char filename[] = "Barcos.txt";
+    char default_bar[] = "Defaultname-D-1\n";
+    char cad_linea[250];
+    int num_tipo_bar = 0, i = 0, campo_barcos = 0;
 
-	FILE *f_bar = fopen(filename, "r");
+    // Intentar abrir el archivo
+    f_bar = fopen(filename, "r");
+    if (f_bar == NULL) {
+        f_bar = fopen(filename, "w");
+        if (f_bar == NULL) {
+            perror("Error al crear el archivo de barcos");
+            return -1;
+        }
+        fprintf(f_bar, "%s", default_bar);
+        fclose(f_bar);
 
-	if (f_bar == NULL) {
-		f_bar = fopen(filename, "w");
-		if (f_bar == NULL) {
-			perror("Error al crear el archivo de barcos");
-			return -1;
-		}
-		fprintf(f_bar, "%s\n", default_bar);
-		fclose(f_bar);
-		f_bar = fopen(filename, "r");
-		if (f_bar == NULL) {
-			perror("Error al abrir el archivo de barcos");
-			return -1;
-		}
-	}
+        f_bar = fopen(filename, "r");
+        if (f_bar == NULL) {
+            perror("Error al abrir el archivo de barcos");
+            return -1;
+        }
+    }
 
-	// Verificar si el archivo está vacío
-	if (fgetc(f_bar) == EOF) {
-		fclose(f_bar);
-		f_bar = fopen(filename, "w");
-		if (f_bar == NULL) {
-			perror("Error al abrir el archivo de barcos");
-			return -1;
-		}
-		fprintf(f_bar, "%s\n", default_bar);
-		fclose(f_bar);
-		f_bar = fopen(filename, "r");
-		if (f_bar == NULL) {
-			perror("Error al abrir el archivo de barcos");
-			return -1;
-		}
-	} else {
-		rewind(f_bar);
-	}
+    // Comprobar si el archivo está vacío
+    if (fgetc(f_bar) == EOF) {
+        fclose(f_bar);
+        f_bar = fopen(filename, "w");
+        if (f_bar == NULL) {
+            perror("Error al crear el archivo de barcos");
+            return -1;
+        }
+        fprintf(f_bar, "%s", default_bar);
+        fclose(f_bar);
 
-	// Contar número de barcos
-	while (fgets(cad_linea, sizeof(cad_linea), f_bar)) {
-		num_tipo_bar++;
-	}
+        f_bar = fopen(filename, "r");
+        if (f_bar == NULL) {
+            perror("Error al abrir el archivo de barcos");
+            return -1;
+        }
+    } else {
+        rewind(f_bar);
+    }
 
-	rewind(f_bar);
+    // Contar número de tipos de barcos
+    while (fgets(cad_linea, sizeof(cad_linea), f_bar) != NULL) {
+        num_tipo_bar++;
+    }
 
-	b->num_tipo_bar = num_tipo_bar;
-	b->bar = (barcos*)malloc(b->num_tipo_bar * sizeof(barcos));
+    if (num_tipo_bar == 0) {
+        printf("No se encontraron barcos en el archivo.\n");
+        fclose(f_bar);
+        return -1;
+    }
 
-	if (b->bar == NULL) {
-		perror("Error al asignar memoria para barcos");
-		fclose(f_bar);
-		return -1;
-	}
+    rewind(f_bar);
 
-	// Cargar datos de los barcos
-	while (fgets(cad_linea, sizeof(cad_linea), f_bar) && i < num_tipo_bar) {
-		campo_barcos = sscanf(cad_linea, "%21[^-]-%c-%d",
+    // Reservar memoria para los barcos
+    b->num_tipo_bar = num_tipo_bar;
+    b->bar = (barcos*)malloc(b->num_tipo_bar * sizeof(barcos));
+    if (b->bar == NULL) {
+        perror("Error al asignar memoria para barcos");
+        fclose(f_bar);
+        return -1;
+    }
+
+    // Cargar los datos de los barcos
+    for (i = 0; i < b->num_tipo_bar; i++) {
+        if (fgets(cad_linea, sizeof(cad_linea), f_bar) == NULL) {
+            printf("Error inesperado al leer datos del barco %d\n", i + 1);
+            liberar_barcos(b);
+            fclose(f_bar);
+            return -1;
+        }
+
+        campo_barcos = sscanf(cad_linea, "%21[^-]-%c-%d",
 			b->bar[i].nomb_barco,
 			&b->bar[i].id_barco,
 			&b->bar[i].tam_barco);
 
-		if (campo_barcos != 3 ||
-			!validar_nombre(b->bar[i].nomb_barco) ||
-			!validar_id_barco(b->bar[i].id_barco) ||
+        if (campo_barcos != 3 || 
+			!validar_nombre(b->bar[i].nomb_barco) || 
+			!validar_id_barco(b->bar[i].id_barco) || 
 			!validar_tam_barco(b->bar[i].tam_barco)) {
-			printf("Error en los datos del barco %d\n", i + 1);
-			liberar_barcos(b);
-			fclose(f_bar);
-			return -1;
-		}
+            printf("Error en los datos del barco %d\n", i + 1);
+            liberar_barcos(b);
+            fclose(f_bar);
+            return -1;
+        }
+    }
 
-		i++;
-	}
-
-	fclose(f_bar);
-	return 0;
+    fclose(f_bar);
+    return 0;
 }
 
 int guardar_barcos(bar_vect *b) {
-	int i;
-	FILE *f_bar;
-	char filename[] = "Barcos.txt";
+    FILE *f_bar = NULL;
+    char filename[] = "Barcos.txt";
+    int i;
 
-	f_bar = fopen(filename, "w");
-	if (f_bar == NULL) {
-		perror("Error al abrir el archivo de barcos");
-		return -1;
-	}
+    f_bar = fopen(filename, "w");
+    if (f_bar == NULL) {
+        perror("Error al abrir el archivo de barcos");
+        return -1;
+    }
 
-	for (i = 0; i < b->num_tipo_bar; i++) {
-		if (fprintf(f_bar, "%s-%c-%d\n",
-			b->bar[i].nomb_barco,
-			b->bar[i].id_barco,
-			b->bar[i].tam_barco) < 0) {
-			perror("Error al escribir en el archivo de barcos");
-			fclose(f_bar);
-			return -1;
-		}
-	}
+    for (i = 0; i < b->num_tipo_bar; i++) {
+        if (fprintf(f_bar, "%s-%c-%d\n",
+                    b->bar[i].nomb_barco,
+                    b->bar[i].id_barco,
+                    b->bar[i].tam_barco) < 0) {
+            perror("Error al escribir en el archivo de barcos");
+            fclose(f_bar);
+            return -1;
+        }
+    }
 
-	fclose(f_bar);
-	return 0;
+    fclose(f_bar);
+    return 0;
 }
 
 //JUEGO:
@@ -212,20 +242,21 @@ int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
             perror("Error al abrir el archivo de juego");
             return -1;
         }
-    } else {
+    } 
+	else {
         rewind(f_jue);
     }
-
-    // Leer cabecera del juego
+	
+	// Leer cabecera del juego
     if (fgets(cad_linea, sizeof(cad_linea), f_jue)) {
         campo_juego = sscanf(cad_linea, "%d-%d-%d", &j->tam_tablero, &j->num_total_bar, &j->num_tipo_bar);
         if (campo_juego != 3 || j->tam_tablero <= 0) {
-            printf("Error en el formato o tamaño inválido en los datos del juego\n");
+            printf("Error en el formato o tamano invalido en los datos del juego\n");
             fclose(f_jue);
             return -1;
         }
     }
-
+	
     // Asignar memoria para cantidad de barcos
     j->num_bar_tipo = (int*)malloc(j->num_tipo_bar * sizeof(int));
     if (j->num_bar_tipo == NULL) {
@@ -430,9 +461,97 @@ int guardar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
 }
 
 //FUNCIONES VARIAS:
-void resumen_partida() {
-
+void color(int k) {
+    HANDLE Consola = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(Consola, k);
 }
+
+void resumen_partida(juego *j, jug_vect *jv) {
+    int i, k, l;
+    int agua, tocadas, hundidas, vacias, disparos, hundidos, restan;
+    int tam = j->tam_tablero;
+
+    clear();
+
+    // Cabecera de resumen
+    printf("    ┌─────────┬────────┬──────┬────┬───────┬────────┬────────┬──────┬───────┐\n");
+    printf("    │         │   Valor de las casillas    │               Barcos           │\n");
+    printf("    │ Jugador │Disparos│Vacías│Agua│Tocadas│Hundidas│Hundidos│Restan│Ganador│\n");
+    printf("    ├─────────┼────────┼──────┼────┼───────┼────────┼────────┼──────┼───────┤\n");
+
+    // Estadísticas por jugador
+    for (i = 0; i < 2; i++) {
+        agua = tocadas = hundidas = vacias = 0;
+        disparos = jv->jug[i].num_disp;
+        hundidos = 0;
+        restan = 0;
+
+        for (k = 0; k < tam; k++) {
+            for (l = 0; l < tam; l++) {
+                char c = jv->jug[i].tablero2[k][l];
+                if (c == '*') agua++;
+                else if (c == 'X') tocadas++;
+                else if (c == 'H') hundidas++;
+                else if (c == '|') vacias++;
+            }
+        }
+
+        printf("    │ Jugador%-1d│%8d│%6d│%4d│%7d│%8d│%8d│%6d│%7d│\n",
+			i + 1, disparos, vacias, agua, tocadas, hundidas, hundidos, restan, jv->jug[i].ganador);
+    }
+
+    printf("    └─────────┴────────┴──────┴────┴───────┴────────┴────────┴──────┴───────┘\n\n");
+
+    // Mostrar tableros
+    for (i = 0; i < 2; i++) {
+        printf("Jugador%d:\n", i + 1);
+        printf("     FLOTA                         OPONENTE\n");
+
+        printf("     ");
+        for (k = 0; k < tam; k++) printf("|%d", k);
+        printf("          ");
+        for (k = 0; k < tam; k++) printf("|%d", k);
+        printf("\n");
+
+        printf("   --");
+        for (k = 0; k < tam; k++) printf("|-");
+        printf("        --");
+        for (k = 0; k < tam; k++) printf("|-");
+        printf("\n");
+
+        for (k = 0; k < tam; k++) {
+            printf("   %c ", 'A' + k);		// Letra para la fila izquierda (FLOTA)
+
+            for (l = 0; l < tam; l++) {
+                printf("|");
+                color(VERDE);
+                printf("%c", jv->jug[i].tablero1[k][l]);
+                color(BLANCO);
+            }
+
+            printf("       %2c ", 'A' + k);	// Letra para la fila derecha (OPONENTE)
+
+            for (l = 0; l < tam; l++) {
+                printf("|");
+                char c = jv->jug[i].tablero2[k][l];
+                if (c == '*') color(AZUL);
+                else if (c == 'X') color(ROJO);
+                else if (c == 'H') color(AMARILLO);
+                else color(BLANCO);
+                printf("%c", c);
+                color(BLANCO);
+            }
+
+            printf("\n");
+        }
+
+        printf("\n");
+    }
+
+    printf("Pulsa <ENTER> para continuar.\n");
+    getchar();
+}
+
 
 int cambiar_tam_tablero(juego *j, bar_vect *b, jug_vect *jv) {
     int i, fila, colum, nuevo_tam;
@@ -448,7 +567,7 @@ int cambiar_tam_tablero(juego *j, bar_vect *b, jug_vect *jv) {
     scanf("%c", &resp);
     fflush(stdin);
     confirmacion(&resp);
-
+	
     if (resp == 'S' || resp == 's') {
         printf("\n\nIntroduce el nuevo tamano del tablero (3-26): ");
         scanf("%d", &nuevo_tam);
@@ -554,17 +673,12 @@ int cambiar_tam_tablero(juego *j, bar_vect *b, jug_vect *jv) {
         }
     } 
 	else {
-        printf("\nVolviendo al menu principal...\n");
+        printf("\nContinuando con el resto de la configuracion...\n");
         Sleep(1000);
-
-        if (menu_principal(j, b, jv) == -1) {
-            return -1;
-        }
     }
-
+	
     return 0;
 }
-
 
 //MENÚS:
 int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
@@ -694,7 +808,7 @@ int menu_partida(juego *j, bar_vect *b, jug_vect *jv) {
 				break;
 
 			case 3:
-				resumen_partida();
+				resumen_partida(j, jv);
 				break;
 
 			case 4:
