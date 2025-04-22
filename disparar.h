@@ -22,7 +22,7 @@ void moverCursorConsola(int, int);
 // Cabecera imprimirtablero(int, int, int, jug_vect *, int)
 // Precondición: Variables no nulas
 // Postcondición: imprime el estado actual del tablero dependiendo del turno actual
-void imprimirtablero(int, int, int, jug_vect *, int);
+void imprimirtablero(int, int, int, int, jug_vect *, int);
 
 // Cabecera: void moverCursor(char, int *, int *, int)
 // Precondicíón: Se conoce la posición x e y de la matriz y el tamaño del vector
@@ -47,7 +47,7 @@ void apuntarJugador(int *, int *, jug_vect *, int, int *, int *, int []);
 // Cabecera: desplazarCpu(int *, int *, int *, int *, int, jug_vect *, int)
 // Precondición: Variables no nulas
 // Postcondición: Modifica la posición de la Cpu paso a paso dada la posición final que deberá tomar dicho valor
-void desplazarCpu(int *, int *, int *, int *, int, jug_vect *, int);
+void desplazarCpu(int *, int *, int *, int *, int, int, jug_vect *, int);
 
 // Cabecera: apuntarCPU(int *, int *, int *, int *, int *, int *, jug_vect *, int, int *, int *, int *, int *, int [])
 // Precondición: Variables no nulas

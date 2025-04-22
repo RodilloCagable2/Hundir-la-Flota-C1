@@ -20,27 +20,88 @@ void moverCursorConsola(int x, int y) {
     SetConsoleCursorPosition(hConsole, pos);
 }
 
-// Cabecera imprimirtablero(int, int, int, Jugador, int)
+// Cabecera imprimirtablero(int, int, int, int, Jugador, int)
 // Precondición: Variables no nulas
 // Postcondición: imprime el estado actual del tablero dependiendo del turno actual
-void imprimirtablero(int cursorX, int cursorY, int turno, jug_vect *jv, int tam_vector) {
+void imprimirtablero(int cursorX, int cursorY, int turno, int turnoOpuesto, jug_vect *jv, int tam_vector) {
     int i;
     char c;
 
-    moverCursorConsola(0, 0);  // En lugar de limpiar la pantalla, movemos el cursor arriba
+    if(turno == 0){
+        moverCursorConsola(0, 0);  // En lugar de limpiar la pantalla, movemos el cursor arriba
 
-    printf("                      ");
-    for (c = 'A'; c < 'A' + tam_vector; c++)
-        printf("  %c", c);
-    printf("\n");
+        printf(" ");
+        for (i = 0; i < tam_vector; i++)
+            printf("  %i", i);
+        printf("\n");
 
-    for (i = 0; i < tam_vector; i++) {
-        printf("                    %2d ", i);
-        for (int j = 0; j < tam_vector; j++) {
-            if (i == cursorY && j == cursorX)
-                printf("[%c]", jv->jug[turno].tablero2[i][j]);  // Resaltamos donde está el cursor
-            else
-                printf(" %c ", jv->jug[turno].tablero2[i][j]);
+        c = 'A';
+        for (i = 0; i < tam_vector; i++) {
+            printf("%c ", c);
+            for (int j = 0; j < tam_vector; j++) {
+                if (i == cursorY && j == cursorX)
+                    printf("[%c]", jv->jug[turno].tablero2[i][j]);  // Resaltamos donde está el cursor
+                else
+                    printf(" %c ", jv->jug[turno].tablero2[i][j]);
+            }
+            printf("\n");
+            c++;
+        }
+
+        printf("\n");
+
+        printf(" ");
+        for (i = 0; i < tam_vector; i++)
+            printf("  %i", i);
+        printf("\n");
+
+        c = 'A';
+        for (i = 0; i < tam_vector; i++) {
+            printf("%c ", c);
+            for (int j = 0; j < tam_vector; j++) {
+                printf(" %c ", jv->jug[turnoOpuesto].tablero2[i][j]);  // Resaltamos donde está el cursor
+            }
+            printf("\n");
+            c++;
+        }
+        printf("\n");
+    }
+    else{
+        moverCursorConsola(0, 0);  // En lugar de limpiar la pantalla, movemos el cursor arriba
+
+        printf(" ");
+        for (i = 0; i < tam_vector; i++)
+            printf("  %i", i);
+        printf("\n");
+
+        c = 'A';
+        for (i = 0; i < tam_vector; i++) {
+            printf("%c ", c);
+            for (int j = 0; j < tam_vector; j++) {
+                printf(" %c ", jv->jug[turnoOpuesto].tablero2[i][j]);  // Resaltamos donde está el cursor
+            }
+            printf("\n");
+            c++;
+        }
+
+        printf("\n");
+
+        printf(" ");
+        for (i = 0; i < tam_vector; i++)
+            printf("  %i", i);
+        printf("\n");
+
+        c = 'A';
+        for (i = 0; i < tam_vector; i++) {
+            printf("%c ", c);
+            for (int j = 0; j < tam_vector; j++) {
+                if (i == cursorY && j == cursorX)
+                    printf("[%c]", jv->jug[turno].tablero2[i][j]);  // Resaltamos donde está el cursor
+                else
+                    printf(" %c ", jv->jug[turno].tablero2[i][j]);
+            }
+            printf("\n");
+            c++;
         }
         printf("\n");
     }
@@ -112,7 +173,7 @@ void actualizarHundido(int cursorX, int cursorY, jug_vect *jv, int turno, int tu
         for (dy = -1; dy <= 1; dy++) {
             x = cursorX + dx;
             y = cursorY + dy;
-            
+
             if ((x >= 0) && (x < tamTablero) && (y >= 0) && (y < tamTablero) && (jv->jug[turnoOpuesto].tablero1[y][x] == 'X')) {
                 // Seguir avanzando en la misma dirección
                 jv->jug[turno].tablero2[y][x] = 'H';
@@ -151,7 +212,7 @@ void apuntarJugador(int *cursorX, int *cursorY, jug_vect *jv, int tam_vector, in
     char input;
 
     printf("\n\nBB%iBB\n\n", barcosRestantes[*turno]);
-    imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+    imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
     input = getch();
 
     if (input == 'w' || input == 'a' || input == 's' || input == 'd' || input == 'W' || input == 'A' || input == 'S' || input == 'D') {
@@ -164,11 +225,12 @@ void apuntarJugador(int *cursorX, int *cursorY, jug_vect *jv, int tam_vector, in
             valTocado = tocadoHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector);
             if(valTocado == 0) {
                 actualizarHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector, barcosRestantes);
+                jv->jug[*turno].ganador += 1;
             }
-            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+            imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
         } else {
             jv->jug[*turno].tablero2[*cursorY][*cursorX] = 'O';
-            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+            imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
             *turno = 1 - *turno;
             *turnoOpuesto = 1 - *turnoOpuesto;
         }
@@ -176,10 +238,10 @@ void apuntarJugador(int *cursorX, int *cursorY, jug_vect *jv, int tam_vector, in
     }
 }
 
-// Cabecera: desplazarCpu(int *, int *, int *, int *, int, Jugador, int)
+// Cabecera: desplazarCpu(int *, int *, int *, int *, int, int, Jugador, int)
 // Precondición: Variables no nulas
 // Postcondición: Modifica la posición de la Cpu paso a paso dada la posición final que deberá tomar dicho valor
-void desplazarCpu(int *cursorX, int *cursorY, int *posX, int *posY, int turno, jug_vect *jv, int tamTablero) {
+void desplazarCpu(int *cursorX, int *cursorY, int *posX, int *posY, int turno, int turnoOpuesto, jug_vect *jv, int tamTablero) {
     // Asegúrate de que las coordenadas se modifican correctamente.
     while (*cursorX != *posX || *cursorY != *posY) {
         Sleep(50);
@@ -192,7 +254,7 @@ void desplazarCpu(int *cursorX, int *cursorY, int *posX, int *posY, int turno, j
         } else if (*cursorY > *posY) {
             (*cursorY)--;
         }
-        imprimirtablero(*cursorX, *cursorY, turno, jv, tamTablero);
+        imprimirtablero(*cursorX, *cursorY, turno, turnoOpuesto, jv, tamTablero);
     }
 }
 
@@ -212,7 +274,7 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
             *posX = numeroAleatorio(tam_vector);
         } while (jv->jug[*turno].tablero2[*posY][*posX] != '~');
 
-        desplazarCpu(cursorX, cursorY, posX, posY, *turno, jv, tam_vector);
+        desplazarCpu(cursorX, cursorY, posX, posY, *turno, *turnoOpuesto, jv, tam_vector);
 
         // Evaluar impacto del disparo
         char *casilla = &jv->jug[*turno].tablero1[*cursorY][*cursorX];
@@ -238,11 +300,11 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
                 *aciertoPrevioCpu = 1;
                 *continuarDireccion = 1;
             }
-            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+            imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
             Sleep(100);
         } else {
             jv->jug[*turno].tablero2[*cursorY][*cursorX] = 'O';
-            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+            imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
             *turno = 1 - *turno;
             *turnoOpuesto = 1 - *turnoOpuesto;
             Sleep(800);
@@ -250,7 +312,7 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
         jv->jug[*turno].num_disp++;
     }
     else { // Si la CPU acertó antes
-        desplazarCpu(cursorX, cursorY, auxX, auxY, *turno, jv, tam_vector);
+        desplazarCpu(cursorX, cursorY, posX, posY, *turno, *turnoOpuesto, jv, tam_vector);
 
         // Generar una dirección válida
         do {
@@ -262,7 +324,7 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
 
         *posX = *cursorX + i;
         *posY = *cursorY + j;
-        desplazarCpu(cursorX, cursorY, posX, posY, *turno, jv, tam_vector);
+        desplazarCpu(cursorX, cursorY, posX, posY, *turno, *turnoOpuesto, jv, tam_vector);
 
         if (jv->jug[*turnoOpuesto].tablero1[*cursorY][*cursorX] == 'X') {
             *continuarDireccion = 1;
@@ -273,22 +335,23 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
                     actualizarHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector, barcosRestantes);
                     *aciertoPrevioCpu = 0;
                     *continuarDireccion = 0;
+                    jv->jug[*turno].ganador += 1;
                 }
                 // Asegurar que no se sale del tablero
                 if (*cursorX + i >= 0 && *cursorX + i < tam_vector && *cursorY + j >= 0 && *cursorY + j < tam_vector) {
                     *posX = *cursorX + i;
                     *posY = *cursorY + j;
-                    desplazarCpu(cursorX, cursorY, posX, posY, *turno, jv, tam_vector);
+                    desplazarCpu(cursorX, cursorY, posX, posY, *turno, *turnoOpuesto, jv, tam_vector);
                 } else {
                     break; // Si se sale, no continuar
                 }
-                imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+                imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
                 Sleep(100);
                 jv->jug[*turno].num_disp++;
             } while (jv->jug[*turnoOpuesto].tablero1[*cursorY][*cursorX] == 'X');
         } else {
             jv->jug[*turno].tablero2[*cursorY][*cursorX] = 'O';
-            imprimirtablero(*cursorX, *cursorY, *turno, jv, tam_vector);
+            imprimirtablero(*cursorX, *cursorY, *turno, *turnoOpuesto, jv, tam_vector);
             *turno = 1 - *turno;
             *turnoOpuesto = 1 - *turnoOpuesto;
             Sleep(800);
@@ -301,6 +364,7 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
 // Precondición: Recibo los registros de jugadores y de barcos
 // Postcondición: modifica la información de los jugadores
 void disparar_jue(jug_vect *jv, bar_vect *bv, juego *j) {
+    system("cls");
     srand(time(NULL));
 
     int cursorX[2] = {0, 0}, cursorY[2] = {0, 0}; // Cursores de cada jugador
@@ -309,7 +373,8 @@ void disparar_jue(jug_vect *jv, bar_vect *bv, juego *j) {
     int num_barcos, tam_lista_barcos, turno = 0, turnoOpuesto = 1;
     int barcosRestantes[2] = {j->num_total_bar, j->num_total_bar};
 
-    while (1) {
+    while (jv->jug[turno].ganador == 0) {
+        guardar_datajuego(j, bv, jv);
         if (jv->jug[turno].tipo_disp == 'M') {
             apuntarJugador(&cursorX[turno], &cursorY[turno], jv, j->tam_tablero, &turno, &turnoOpuesto, barcosRestantes);
         } else {
