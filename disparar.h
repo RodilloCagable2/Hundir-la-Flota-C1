@@ -40,20 +40,20 @@ int tocadoHundido(int, int, jug_vect *, int, int, int);
 // Postcondición: Modifica en el tablero del jugador dado las casillas tocadas por casillas hundidas
 void actualizarHundido(int, int, jug_vect *, int, int, int, int []);
 
-// Cabecera: apuntarJugador(int *, int *, jug_vect *, int, int *, int *, int [])
+// Cabecera: apuntarJugador(int *, int *, jug_vect *, juego *, int, int *, int *, int [])
 // Precondición: Variable no nulas
 // Postcondición: Modifica el tablero del jugador cuándo se cumplen las condiciones
-void apuntarJugador(int *, int *, jug_vect *, int, int *, int *, int []);
+void apuntarJugador(int *, int *, jug_vect *, juego *, bar_vect *, int, int *, int *, int []);
 
 // Cabecera: desplazarCpu(int *, int *, int *, int *, int, int, jug_vect *, int)
 // Precondición: Variables no nulas
 // Postcondición: Modifica la posición de la Cpu paso a paso dada la posición final que deberá tomar dicho valor
 void desplazarCpu(int *, int *, int *, int *, int, int, jug_vect *, int);
 
-// Cabecera: apuntarCPU(int *, int *, int *, int *, int *, int *, jug_vect *, int, int *, int *, int *, int *, int [])
+// Cabecera: apuntarCPU(int *, int *, int *, int *, int *, int *, jug_vect *, juego *, int, int *, int *, int *, int *, int [])
 // Precondición: Variables no nulas
 // Postcondición: Modifica el tablero de la Cpu
-void apuntarCPU(int *, int *, int *, int *, int *, int *, jug_vect *, int, int *, int *, int *, int *, int []);
+void apuntarCPU(int *, int *, int *, int *, int *, int *, jug_vect *, juego *,int, int *, int *, int *, int *, int []);
 
 // Cabecera: void disparar_jue(jug_vect *, bar_vect *, juego *)
 // Precondición: Recibo los registros de jugadores y de barcos
