@@ -473,73 +473,110 @@ void resumen_partida(juego *j, jug_vect *jv) {
 
     clear();
 
-    // Cabecera de resumen
+    // Imprime la cabecera de la tabla de resumen
     printf("    ┌─────────┬────────┬──────┬────┬───────┬────────┬────────┬──────┬───────┐\n");
     printf("    │         │   Valor de las casillas    │               Barcos           │\n");
     printf("    │ Jugador │Disparos│Vacías│Agua│Tocadas│Hundidas│Hundidos│Restan│Ganador│\n");
     printf("    ├─────────┼────────┼──────┼────┼───────┼────────┼────────┼──────┼───────┤\n");
 
-    // Estadísticas por jugador
+    // Recorre los dos jugadores para calcular y mostrar estadísticas
     for (i = 0; i < 2; i++) {
         agua = tocadas = hundidas = vacias = 0;
         disparos = jv->jug[i].num_disp;
-        hundidos = 0;
-        restan = 0;
-
+        hundidos = jv->jug[i].hundidos;
+        restan = j->num_total_bar - hundidos;
+		
+		// Analiza el tablero del oponente donde se han realizado los disparos
         for (k = 0; k < tam; k++) {
             for (l = 0; l < tam; l++) {
                 char c = jv->jug[i].tablero2[k][l];
-                if (c == '*') agua++;
-                else if (c == 'X') tocadas++;
-                else if (c == 'H') hundidas++;
-                else if (c == '|') vacias++;
-            }
+                if (c == '*') {
+                	agua++;		
+				}
+                else if (c == 'X') {
+                	tocadas++;	
+				}
+                else if (c == 'H') {
+					hundidas++;	
+				}
+                else if (c == '|') {
+                	vacias++;
+				}
+        	}
         }
-
+		
+		// Muestra la fila de estadísticas para el jugador actual
         printf("    │ Jugador%-1d│%8d│%6d│%4d│%7d│%8d│%8d│%6d│%7d│\n",
 			i + 1, disparos, vacias, agua, tocadas, hundidas, hundidos, restan, jv->jug[i].ganador);
     }
 
     printf("    └─────────┴────────┴──────┴────┴───────┴────────┴────────┴──────┴───────┘\n\n");
 
-    // Mostrar tableros
+    // Muestra los tableros finales de cada jugador
     for (i = 0; i < 2; i++) {
         printf("Jugador%d:\n", i + 1);
         printf("     FLOTA                         OPONENTE\n");
-
+		
+		// Imprime cabeceras de los tableros (índices de columnas)
         printf("     ");
-        for (k = 0; k < tam; k++) printf("|%d", k);
+        
+        for (k = 0; k < tam; k++) {
+        	printf("|%d", k);
+		}
+		
         printf("          ");
-        for (k = 0; k < tam; k++) printf("|%d", k);
+        
+        for (k = 0; k < tam; k++) {
+        	printf("|%d", k);
+		}
+		
         printf("\n");
-
         printf("   --");
-        for (k = 0; k < tam; k++) printf("|-");
+        
+        for (k = 0; k < tam; k++) {
+        	printf("|-");
+		}
+		
         printf("        --");
-        for (k = 0; k < tam; k++) printf("|-");
+        
+        for (k = 0; k < tam; k++) {
+        	printf("|-");
+		}
+		
         printf("\n");
-
+        
+        // Recorre cada fila de los tableros
         for (k = 0; k < tam; k++) {
             printf("   %c ", 'A' + k);		// Letra para la fila izquierda (FLOTA)
-
+			
+			// Imprime tablero de la flota propia
             for (l = 0; l < tam; l++) {
                 printf("|");
-                color(VERDE);
+                color(2);				// Color verde para la flota
                 printf("%c", jv->jug[i].tablero1[k][l]);
-                color(BLANCO);
+                color(BLANCO);				// Vuelve al color blanco
             }
 
             printf("       %2c ", 'A' + k);	// Letra para la fila derecha (OPONENTE)
-
+			
+			// Imprime tablero del oponente con colores según resultado
             for (l = 0; l < tam; l++) {
                 printf("|");
                 char c = jv->jug[i].tablero2[k][l];
-                if (c == '*') color(AZUL);
-                else if (c == 'X') color(ROJO);
-                else if (c == 'H') color(AMARILLO);
-                else color(BLANCO);
+                if (c == '*') {
+                	color(AZUL);			// Agua
+				}					
+                else if (c == 'X') {
+                	color(ROJO);			// Tocado
+				}			
+                else if (c == 'H') {
+                	color(AMARILLO);		// Hundido
+				}		
+                else {
+                	color(BLANCO);			// Otro
+				}
                 printf("%c", c);
-                color(BLANCO);
+                color(BLANCO);				// Reset color después de cada carácter
             }
 
             printf("\n");
@@ -549,9 +586,8 @@ void resumen_partida(juego *j, jug_vect *jv) {
     }
 
     printf("Pulsa <ENTER> para continuar.\n");
-    getchar();
+    getchar();								// Espera que el usuario pulse Enter para continuar
 }
-
 
 int cambiar_tam_tablero(juego *j, bar_vect *b, jug_vect *jv) {
     int i, fila, colum, nuevo_tam;
