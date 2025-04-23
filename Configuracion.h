@@ -20,7 +20,7 @@ void mostrar_barcos(bar_vect *b);
 /*Precondición: jugadores jug_vect es un vector que almacena datos con esctructura jugadores y  juego jueg es una variable que nos pasara
                 por valor lo almacenado en el registro para su impresion*/
 //Postcondición: Mostrar por pantall la configuración establecida para el juego.
-void mostrar_config(jug_vect *j,juego jueg);
+void mostrar_config(jug_vect *j,juego *jueg);
 
 //Funcion Introducir Datos
 /*Precondición: jug_vect *jueg es un puntero que pasa la totalidad del registro jug_vect, juego *j es un puntero que pasa la totalidad del registro juego

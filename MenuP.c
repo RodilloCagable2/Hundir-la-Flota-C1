@@ -2,19 +2,8 @@
 #include "Complementos.h"
 #include "Configuracion.h"
 #include "IntDatos.h"
+#include "colocar_barcos.h"
 #include "disparar.h"
-#define VERDE 2
-#define ROJO 4
-#define AMARILLO 6
-#define BLANCO 7
-#define AZUL 9
-#define VERDE_ROJO 36 //164
-#define VERDE_BLANCO 39 //167
-#define VERDE_VERDE 34 //170
-#define ROJO_ROJO 68
-#define ROJO_BLANCO 71
-#define AZUL_AZUL 153
-#define AZUL_BLANCO 159
 
 //GESTIÓN DE MEMORIA:
 void liberar_tableros(jug_vect *jv, int tam_tablero) {
@@ -187,9 +176,9 @@ int guardar_barcos(bar_vect *b) {
 
     for (i = 0; i < b->num_tipo_bar; i++) {
         if (fprintf(f_bar, "%s-%c-%d\n",
-                    b->bar[i].nomb_barco,
-                    b->bar[i].id_barco,
-                    b->bar[i].tam_barco) < 0) {
+            b->bar[i].nomb_barco,
+            b->bar[i].id_barco,
+            b->bar[i].tam_barco) < 0) {
             perror("Error al escribir en el archivo de barcos");
             fclose(f_bar);
             return -1;
@@ -207,7 +196,8 @@ int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
     char cad_linea[250];
     char default_jue[] = "03-01-1\nS-01\n1-Defaultname1-000-M-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~\n2-Defaultname2-000-A-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~";
     int i, fila, colum, campo_juego, len_linea;
-
+    j->num_tipo_bar = b->num_tipo_bar;
+	
     // Intentar abrir el archivo
     f_jue = fopen(filename, "r");
 
@@ -264,7 +254,7 @@ int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
         fclose(f_jue);
         return -1;
     }
-
+	
     // Cargar información de tipos de barcos
     for (i = 0; i < j->num_tipo_bar; i++) {
         if (!fgets(cad_linea, sizeof(cad_linea), f_jue)) {
@@ -399,7 +389,7 @@ int guardar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
         fclose(f_jue);
         return -1;
     }
-
+	
     // Guardar datos de los tipos de barcos
     for (i = 0; i < j->num_tipo_bar; i++) {
         if (fprintf(f_jue, "%c-%02d\n", b->bar[i].id_barco, j->num_bar_tipo[i]) < 0) {
@@ -552,9 +542,9 @@ void resumen_partida(juego *j, jug_vect *jv) {
 			// Imprime tablero de la flota propia
             for (l = 0; l < tam; l++) {
                 printf("|");
-                color(2);				// Color verde para la flota
+                color(2);					// Color verde para la flota
                 printf("%c", jv->jug[i].tablero1[k][l]);
-                color(BLANCO);				// Vuelve al color blanco
+                color(7);					// Vuelve al color blanco
             }
 
             printf("       %2c ", 'A' + k);	// Letra para la fila derecha (OPONENTE)
@@ -564,19 +554,19 @@ void resumen_partida(juego *j, jug_vect *jv) {
                 printf("|");
                 char c = jv->jug[i].tablero2[k][l];
                 if (c == '*') {
-                	color(AZUL);			// Agua
+                	color(159);				// Agua (azul-blanco)
 				}					
                 else if (c == 'X') {
-                	color(ROJO);			// Tocado
+                	color(4);				// Tocado (rojo)
 				}			
                 else if (c == 'H') {
-                	color(AMARILLO);		// Hundido
+                	color(6);				// Hundido (amarillo)
 				}		
                 else {
-                	color(BLANCO);			// Otro
+                	color(7);				// Otro (blanco)
 				}
                 printf("%c", c);
-                color(BLANCO);				// Reset color después de cada carácter
+                color(7);					// Reset color después de cada carácter (blanco)
             }
 
             printf("\n");
@@ -724,7 +714,7 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 	do {
 		do {
 			clear();
-			printf("\n<<<CONFIGURACION>>>\n\n");
+			printf("\n<<<CONFIGURACIÓN>>>\n\n");
 			Sleep(1000);
 			printf("1. Introducir datos\n");
 			printf("2. Mostrar\n");
@@ -739,8 +729,8 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 		switch (op) {
 			case 1:
 				//Función que contiende todas las funciones para la introducción de datos
-				cambiar_tam_tablero(j, b, jv);
-				//intro_dat(jv, j, b);
+				//cambiar_tam_tablero(j, b, jv);
+				intro_dat(jv, j, b);
 				break;
 
 			case 2:
@@ -750,17 +740,17 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 				do{
                     scanf("%i",&op2);
                     fflush(stdin);
-				}while(op2 != 1 || op2 != 2 || op != 3);
+				}while(op2 != 1 && op2 != 2 && op != 3);
 				
 				switch(op2){
 				    case 1:
-				        mostrar_config(jv, *j);
+				        mostrar_config(jv, j);
 				        break;
                     case 2:
                         mostrar_barcos(b);
                         break;
                     case 3:
-                        mostrar_config(jv, *j);
+                        mostrar_config(jv, j);
                         mostrar_barcos(b);
                         break;
 				}
@@ -772,12 +762,18 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 				break;
 
 			case 4:
-				if (guardar_datajuego(j, b, jv) == -1) {
+				if (guardar_barcos(b) == -1) {
 					return -1;
 				}
+    			if (guardar_datajuego(j, b, jv) == -1) {
+        			return -1;
+    			}
 				break;
 
 			case 5:
+				if (cargar_barcos(b) == -1) {
+					return -1;
+				}
 				if (cargar_datajuego(j, b, jv) == -1) {
 					return -1;
 				}
@@ -836,7 +832,7 @@ int menu_partida(juego *j, bar_vect *b, jug_vect *jv) {
 
 		switch (op) {
 			case 1:
-				//TODO: Implementar juego
+				jug_colocar_barcos(b, j, jv);
 				break;
 
 			case 2:

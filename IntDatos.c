@@ -17,8 +17,11 @@ void int_nombre(char nombre[]){
         do{
         ng=0;
         fflush(stdin);
-        printf("\n================================\nIntroduzca su nombre por favor:\n");
+        printf("\n================================\nIntroduzca su nombre por favor: \n");
         fgets(nombre,21,stdin);
+        terminador_cad(nombre);
+        fflush(stdin);
+        
         //Bucle que analiza todos los caracteres de la cadena en busca de guiones
         for(i=0;i<21;i++){
             if(nombre[i]=='-')
@@ -26,10 +29,10 @@ void int_nombre(char nombre[]){
         }
         if(ng==1)
             printf("No se admiten guiones ('-'), introduzca el nombre de nuevo\n");
-        }while(ng=!0);
-        terminador_cad(nombre);
+        }while(ng!=0);
+        
         //Mostrar el nombre escrito por si no es del agrado del usuario
-        printf("\n================================\nEl nombre introducido es:\n");
+        printf("\n================================\nEl nombre introducido es: \n");
         printf("%s",nombre);
         //Easter eggs
         if(strcmp(nombre,"Among Us\0")==0) printf("\nYou're so sussy\n");
@@ -90,7 +93,7 @@ void tam_tab(barcos v_barcos[],int n_barcos, int *valor){
     //Bucle para repetir la función en caso de quererlo
     do{
         ctrl1=0;
-        printf("\n================================\nIntroduzca el numero que determinara las dimensiones del tablero\n");
+        printf("\n================================\nIntroduzca el numero que determinara las dimensiones del tablero: \n");
         //Bucle que se asegura de que en el espacio establecido quepan todos los barcos
         do{
         ctrl2=1;
@@ -108,8 +111,8 @@ void tam_tab(barcos v_barcos[],int n_barcos, int *valor){
 }
 
 void cantipbar(barcos v_barcos[],int n_barcos){
-    static char ctrl1,ctrl2;
-    static int i, pos;
+    static char ctrl1,ctrl2, pos;
+    static int i;
     printf("\n================================\nEL ASTILLERO\n================================\n");
     //Escritura de todos los barcos que se encuentran en memoria antes de hacer ningún cambio
     for(i=0;i<n_barcos;i++){
@@ -123,16 +126,17 @@ void cantipbar(barcos v_barcos[],int n_barcos){
             //Bucle para cambiar la cantidad de los barcos
             do{
             ctrl1=0;
-            printf("\n================================\nSeleccione la id del barco cuya cantidad desea modificar\n");
+            printf("\n================================\nSeleccione la id del barco cuya cantidad desea modificar: \n");
+            
             //Bucle que se asegura de que el jugador coja una id válida
             do{
-            scanf("%i",&pos);
+            scanf("%c",&pos);
             fflush(stdin);
             i=0;
             while(pos!=v_barcos[i].id_barco&&i<n_barcos)
                 i++;
             if(i==n_barcos)
-            printf("La id indicada no esta definida, inserte otro valor\n");
+            printf("La id indicada no esta definida, inserte otro valor: \n");
             }while(i==n_barcos);
             printf("\nIntroduzca la nueva cantidad de %s\n",v_barcos[i].nomb_barco);
             scanf("%i",&v_barcos[i].num_bar_tipo);

@@ -23,7 +23,7 @@ void Borrar(){
         do{
             scanf("%i",&ctrl2);
             fflush(stdin);
-            if(ctrl2!=0 && ctrl2!=1 && ctrl2!=2 && ctrl2!=3 && ctrl2!=4) printf("\nEl numero introducido no es válido, por favor, introduzca un numero del 1 al 4.\n");
+            if(ctrl2!=0 && ctrl2!=1 && ctrl2!=2 && ctrl2!=3 && ctrl2!=4) printf("\nEl numero introducido no es válido, por favor, introduzca un numero del 0 al 3: \n");
         }while(ctrl2!=0 && ctrl2!=1 && ctrl2!=2 && ctrl2!=3 && ctrl2!=4);
         switch(ctrl2){
         //Caso 0 = Salir sin borrar nada
@@ -98,7 +98,7 @@ void mostrar_barcos(bar_vect *b){
     }
 }
 
-void mostrar_config(jug_vect *j,juego jueg){
+void mostrar_config(jug_vect *j,juego *jueg){
     static int i;
     printf("\n================================\nConfiguracion actual\n================================\n");
     //Bucle que imprime ambos jugadores del registro
@@ -122,92 +122,96 @@ void mostrar_config(jug_vect *j,juego jueg){
         }
         printf("\n================================\n");
     }
-    printf("\nDimensiones del tablero: %i x %i\n",jueg.tam_tablero,jueg.tam_tablero);
+    printf("\nDimensiones del tablero: %i x %i\n",jueg->tam_tablero,jueg->tam_tablero);
     printf("\n================================\n");
 }
 
-void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
+void intro_dat(jug_vect *jueg, juego *j, bar_vect *barc){
     int op,op2,auxi;
-    char ctrl,auxc;
-    //Bucle para repetir la función en caso de quererlo
-    do{
-        ctrl=0;
-        op2=0;
-        //Menu que le muestra al jugador las opciones y no le deja salir hasta que la op indique una de las opciones
-        do {
-			printf("\n<<<Introducir Datos>>>\n\n");
-			Sleep(1000);
-			printf("1. Nombre de un jugador\n");
-			printf("2. Tipo de disparo\n");
-			printf("3. Comienzo\n");
-			printf("4. Dimensiones del tablero\n");
-			printf("5. Cantidad de barcos por tipo\n");
-			printf("6. Crear barcos nuevo\n");
-			printf("7. Volver\n\n");
-			scanf("%d", &op);
-			fflush(stdin);
-		}while (op < 1 || op > 7);
-        switch(op){
-            case 1:
-                //Cambiar o Introducir el nombre a un jugador
-                printf("\n================================\nSeleccione el jugador cuyo nombre desea cambiar. [1] [2]\n");
-                //Bucle que se asegura de que se escoja un jugador valido
-                do{
-                    scanf("%d",&op2);
-                    fflush(stdin);
-                    if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo\n");
-                }while(op2!=1 && op2!=2);
-                op2=op2-1;
-                int_nombre(jueg->jug[op2].nomb_jug);
-                break;
-            case 2:
-                //Seleccionar si el disparo es automatico o manual
-                auxc=0;
-                printf("\n================================\nSeleccione el jugador cuyo tipo de disparo desea cambiar. [1] [2]\n");
-                //Bucle que se asegura de que se escoja un jugador valido
-                do{
-                    scanf("%d",&op2);
-                    fflush(stdin);
-                    if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo\n");
-                }while(op2!=1 && op2!=2);
-                op2=op2-1;
-                tipo_disparo(&auxc);
-                jueg->jug[op2].tipo_disp=auxc;
-                break;
-            case 3:
-                //Seleccionar si el jugador seleccionado quiere empezar o no
-                auxi=0;
-                printf("\n================================\nSeleccione el jugador cuya variable de comienzo desea cambiar. [1] [2]\n");
-                //Bucle que se asegura de que se escoja un jugador valido
-                do{
-                    scanf("%d",&op2);
-                    fflush(stdin);
-                    if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo\n");
-                }while(op2!=1 && op2!=2);
-                op2=op2-1;
-                comienza(&auxi);
-                jueg->jug[op2].comienza=auxi;
-                break;
-            case 4:
-                //Modificar las dimensiones del tablero
-                auxi=0;
-                tam_tab(barc->bar,barc->num_tipo_bar,&auxi);
-                j->tam_tablero=auxi;
-                break;
-            case 5:
-                //Modificar la cantidad de barcos de cada tipo
-                cantipbar(barc->bar,barc->num_tipo_bar);
-                tot_barco(&auxi);
-                j->num_total_bar=auxi;
-                break;
-            case 6:
-                //Crear barcos nuevos
-                crear_barco(barc,j);
-                tot_barco(&auxi);
-                j->num_total_bar=auxi;
-                break;
-        }
-        printf("\n================================\nDesea hacer algo mas? [S] [N]\n");
-        confirmacion(&ctrl);
-    }while(ctrl!='N' && ctrl!='n');
+    char auxc;
+    
+    op2=0;
+    //Menu que le muestra al jugador las opciones y no le deja salir hasta que la op indique una de las opciones
+    do {
+    	clear();
+		printf("\n<<<INTRODUCIR DATOS>>>\n\n");
+		Sleep(1000);
+		printf("1. Nombre de un jugador\n");
+		printf("2. Tipo de disparo\n");
+		printf("3. Jugador que comienza\n");
+		printf("4. Dimensiones del tablero\n");
+		printf("5. Cantidad de barcos por tipo\n");
+		printf("6. Crear barcos nuevos\n");
+		printf("7. Volver\n\n");
+		scanf("%d", &op);
+		fflush(stdin);
+	}while (op < 1 || op > 7);
+    switch(op) {
+        case 1:
+            //Cambiar o Introducir el nombre a un jugador
+            printf("\n================================\nSeleccione el jugador cuyo nombre desea cambiar: [1] [2]\n");
+            //Bucle que se asegura de que se escoja un jugador valido
+            do{
+                scanf("%d",&op2);
+                if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo: \n");
+            }while(op2!=1 && op2!=2);
+            op2 = op2 - 1;
+            int_nombre(jueg->jug[op2].nomb_jug);
+            break;
+        case 2:
+            //Seleccionar si el disparo es automatico o manual
+            auxc=0;
+            printf("\n================================\nSeleccione el jugador cuyo tipo de disparo desea cambiar: [1] [2]\n");
+            //Bucle que se asegura de que se escoja un jugador valido
+            do{
+                scanf("%d",&op2);
+                fflush(stdin);
+                if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo\n");
+            }while(op2!=1 && op2!=2);
+            op2=op2-1;
+            tipo_disparo(&auxc);
+            jueg->jug[op2].tipo_disp=auxc;
+            break;
+        case 3:
+            //Seleccionar si el jugador seleccionado quiere empezar o no
+            auxi=0;
+            printf("\n================================\nSeleccione el jugador cuya variable de comienzo desea cambiar: [1] [2]\n");
+            //Bucle que se asegura de que se escoja un jugador valido
+            do{
+                scanf("%d",&op2);
+                fflush(stdin);
+                if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo\n");
+            }while(op2!=1 && op2!=2);
+            op2=op2-1;
+            comienza(&auxi);
+            jueg->jug[op2].comienza=auxi;
+            break;
+        case 4:
+            //Modificar las dimensiones del tablero
+            auxi=0;
+            tam_tab(barc->bar,barc->num_tipo_bar,&auxi);
+            j->tam_tablero=auxi;
+            break;
+        case 5:
+            //Modificar la cantidad de barcos de cada tipo
+            cantipbar(barc->bar,barc->num_tipo_bar);
+            tot_barco(&auxi, barc);
+            j->num_total_bar=auxi;
+            break;
+        case 6:
+            //Crear barcos nuevos
+            crear_barco(barc, j);
+            tot_barco(&auxi, barc);
+            j->num_total_bar=auxi;
+            break;
+        case 7:
+ 				printf("\nVolviendo al menu principal...\n");
+				Sleep(1000);
+				
+				menu_principal(j, barc, jueg);
+        	break;
+        default:
+        	printf("Seleccione una opcion valida: ");
+        	break;
+    }
 }

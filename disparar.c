@@ -1,9 +1,6 @@
 #include "MenuP.h"
 #include "disparar.h"
 
-#define MAX_NOMBRE 20
-#define MAX_TABLERO 25
-
 // Cabecera: int numeroAleatorio(int)
 // Precondición: variables no nulas
 // Postcondición: devuelve un número aleatorio acotado al tamaño del tablero
