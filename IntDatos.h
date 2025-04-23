@@ -24,7 +24,7 @@ void tipo_disparo(char *valor);
 //Función tamaño tablero
 /*Precondición: barcos v_barcos[] es un vector que almacena datos con estructura barcos e int n_barcos el numero total de tipos de barcos. int *valor sera el puntero donde guardaremos el tamaño del tablero*/
 /*Postcondición: Establecer el tamaño del tablero y asegurarse de que este no pueda ser más pequeño al tamaño teórico máximo que ocupanrán los barcos*/
-void tam_tab(barcos v_barcos[],int n_barcos, int *valor);
+int tam_tab(juego *, bar_vect *, jug_vect *);
 
 //Función determinar cantidad de barco por tipo
 //Precondición: barcos v_barcos[] es un vector que almacena datos con estructura barcos e int n_barcos el numero total de tipos de barcos.
@@ -34,7 +34,7 @@ void cantipbar(barcos v_barcos[],int n_barcos);
 //Función añadir barcos nuevos
 //Precondición bar_vect *barc es un puntero que pasa la totalidad del registro bar_vect, juego *jug es un puntero que pasa la totalidad del registro juego
 //Postcondición Añadir un barco nuevo al registro con todas sus características sin afectar a los ya establecidos
-void crear_barco(bar_vect *barc, juego *jug);
+void crear_barco(bar_vect *barc, juego *jug, jug_vect *jv);
 
 //Función que cuenta el total de barcos
 //Precondición int *valor es un puntero a entero que será donde se guarda el total, bar_vect *barc es un puntero que pasa la totalidad del registro bar_vect
