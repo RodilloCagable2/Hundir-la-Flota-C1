@@ -45,7 +45,6 @@ typedef struct {
 	char **tablero1;		//Tablero con la flota del jugador
 	char **tablero2;		//Tablero con la flota del oponente en el cual se dispara
 	int hundidos;			//Barcos hundidos en el momento en el que se termina la partida
-	int num_bar_colocados;	//Barcos que han quedado sin hundir en el momento en el que se termina la partidaç
 } jugadores;
 
 typedef struct {
