@@ -116,7 +116,7 @@ void cantipbar(barcos v_barcos[],int n_barcos){
     printf("\n================================\nEL ASTILLERO\n================================\n");
     //Escritura de todos los barcos que se encuentran en memoria antes de hacer ningún cambio
     for(i=0;i<n_barcos;i++){
-            printf("%i-",v_barcos[i].id_barco);
+            printf("%c-",v_barcos[i].id_barco);
             printf("%s: ",v_barcos[i].nomb_barco);
             printf("%i\n",v_barcos[i].num_bar_tipo);
     }
@@ -147,7 +147,7 @@ void cantipbar(barcos v_barcos[],int n_barcos){
         //Mostrar por pantalla el nuevo astillero con los cambios ya aplicados
         printf("\n================================\nEL ASTILLERO\n================================\n");
         for(i=0;i<n_barcos;i++){
-        printf("%i-",v_barcos[i].id_barco);
+        printf("%c-",v_barcos[i].id_barco);
         printf("%s: ",v_barcos[i].nomb_barco);
         printf("%i\n",v_barcos[i].num_bar_tipo);
         }
