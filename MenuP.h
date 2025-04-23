@@ -44,6 +44,8 @@ typedef struct {
 	int ganador;			//0 = False / 1 = True
 	char **tablero1;		//Tablero con la flota del jugador
 	char **tablero2;		//Tablero con la flota del oponente en el cual se dispara
+	int hundidos;			//Barcos hundidos en el momento en el que se termina la partida
+	int num_bar_colocados;	//Barcos que han quedado sin hundir en el momento en el que se termina la partidaç
 } jugadores;
 
 typedef struct {
@@ -52,7 +54,7 @@ typedef struct {
 
 typedef struct {
 	int tam_tablero;		//Valor n que representa los tamaños de los tableros
-	char tipo_bar[13];		//Tipos de barco a utilizar
+	char tipo_bar[13];		//Nombre de los tipos de barcos a utilizar
 	int num_tipo_bar;		//Número de tipos de barco a utilizar
 	int *num_bar_tipo;		//Número de unidades de cada tipo de barco que conformarán la flota
 	int num_total_bar;		//Número total de barcos que conformarán la flota
