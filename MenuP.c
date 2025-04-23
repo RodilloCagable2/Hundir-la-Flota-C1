@@ -515,7 +515,7 @@ int reinicio_partida(juego *j, bar_vect *b, jug_vect *jv) {
 
     fclose(f_jue);
 
-    printf("Partida reiniciada con exito y datos guardados. Todo listo para jugar otra vez!!!\n");
+    printf("\nPartida reiniciada con exito y datos guardados. Todo listo para jugar otra vez!!!\n");
     return 0;
 }
 

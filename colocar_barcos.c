@@ -9,6 +9,7 @@
 #include "MenuP.h"
 #include "colocar_barcos.h"
 #include "Complementos.h"
+#include "disparar.h"
 
 void jug_colocar_barcos(bar_vect *v_barcos, juego *jug, jug_vect *j_vect){
     printf("inicio");
@@ -29,6 +30,8 @@ void jug_colocar_barcos(bar_vect *v_barcos, juego *jug, jug_vect *j_vect){
             colocar_barco_automatico(v_barcos, jug, j_vect, id);
         }
     }
+    
+    disparar_jue(j_vect, v_barcos, jug);
 }
 
 void colocar_barcos_manual(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, int id_jug){

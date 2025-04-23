@@ -219,9 +219,7 @@ void apuntarJugador(int *cursorX, int *cursorY, jug_vect *jv, juego *j, bar_vect
             system("cls");
             printf("Regresando al menu principal\n");
             system("PAUSE");
-            if(menu_principal(j, bv, jv) == -1){
-                return -1;
-            }
+            menu_principal(j, bv, jv);
         }
         moverCursor(input, cursorX, cursorY, tam_vector);
     } else if ((input == ' ') && (jv->jug[*turno].tablero2[*cursorY][*cursorX] == '~')) { // Impide progresar si la casilla seleccionada ya ha sido revelada
@@ -443,7 +441,6 @@ void disparar_jue(jug_vect *jv, bar_vect *bv, juego *j) {
     int barcosRestantes[2] = {j->num_total_bar, j->num_total_bar};
 
     if (jv->jug[0].num_disp == 0){ // Inicializa el número de barcos y de hundidos solo si la partida ha comenzado
-        j->num_total_bar = 4;
         jv->jug[0].hundidos = 0;
         jv->jug[1].hundidos = 0;
     }
