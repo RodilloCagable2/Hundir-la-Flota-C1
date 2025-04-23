@@ -388,6 +388,7 @@ void apuntarCPU(int *cursorX, int *cursorY, int *posX, int *posY, int *auxX, int
                 *continuarDireccion = 1;
                 do {
                     jv->jug[*turno].tablero2[*cursorY][*cursorX] = 'X';
+
                     valTocado = tocadoHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector);
                     if (valTocado == 0) {
                         actualizarHundido(*cursorX, *cursorY, jv, *turno, *turnoOpuesto, tam_vector, barcosRestantes);
@@ -454,7 +455,6 @@ void disparar_jue(jug_vect *jv, bar_vect *bv, juego *j) {
             apuntarCPU(&cursorX[turno], &cursorY[turno], &posX[turno], &posY[turno], &auxX[turno], &auxY[turno], jv, j,
                        j->tam_tablero, &turno, &turnoOpuesto, &aciertoPrevioCpu[turno], &continuarDireccion[turno], barcosRestantes);
         }
-
         guardar_datajuego(j, bv, jv);
     }
 }

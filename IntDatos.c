@@ -21,7 +21,7 @@ void int_nombre(char nombre[]){
         fgets(nombre,21,stdin);
         terminador_cad(nombre);
         fflush(stdin);
-        
+
         //Bucle que analiza todos los caracteres de la cadena en busca de guiones
         for(i=0;i<21;i++){
             if(nombre[i]=='-')
@@ -30,7 +30,7 @@ void int_nombre(char nombre[]){
         if(ng==1)
             printf("No se admiten guiones ('-'), introduzca el nombre de nuevo\n");
         }while(ng!=0);
-        
+
         //Mostrar el nombre escrito por si no es del agrado del usuario
         printf("\n================================\nEl nombre introducido es: \n");
         printf("%s",nombre);
@@ -127,7 +127,7 @@ void cantipbar(barcos v_barcos[],int n_barcos){
             do{
             ctrl1=0;
             printf("\n================================\nSeleccione la id del barco cuya cantidad desea modificar: \n");
-            
+
             //Bucle que se asegura de que el jugador coja una id válida
             do{
             scanf("%c",&pos);
@@ -179,7 +179,7 @@ void crear_barco(bar_vect *barc, juego *jug){
            printf("Introduzca la id del nuevo barco: ");
            fflush(stdin);
            scanf("%c",&barc->bar[i].id_barco);
-           for(j=0;j<=i;j++){
+           for(j=0;j<i;j++){
             if(barc->bar[i].id_barco==barc->bar[j].id_barco){
                 ctrl1=1;
                 printf("El id establecido ya esta ocupado por otro barco, por favor, utilize otro caracter\n");
