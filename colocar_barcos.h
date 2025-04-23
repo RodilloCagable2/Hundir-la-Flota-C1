@@ -25,6 +25,11 @@ void jug_colocar_barcos(bar_vect*, juego*, jug_vect*);
 //Postcondición: rellena el tablero Flota de un jugador de forma manual, y lo escribe en un fichero 
 void colocar_barcos_manual(bar_vect*, juego*, jug_vect*, int);
 
+//Cabecera: void reestablecer_tablero(juego*jug, jug_vect *j_vect, int id_jug, bar_vect *v_barcos)
+//Precondición: las variables no deben ser nulas
+//Postcondición: reestablece el tablero1 del jugador indicado al estado original
+void reestablecer_tablero(juego*jug, jug_vect *j_vect, int id_jug, bar_vect *v_barcos);
+
 
 //Cabecera: void mostrar_info_barcos(bar_vec v_barcos)
 //Precondición: la variable v_barcos no debe ser nula
@@ -72,5 +77,7 @@ double porcentaje_tablero(juego *jug, jug_vect*j_vect, int id);
 //Precondición: las variales no deben ser nulas
 //Postcondición: devuelve 0 si al lado de una posicion no hay un barco y devuelve 1 si al lado de una posicion si hay un barco
 int alrededor_barco(juego *jug, jug_vect *j_vect, int fila, int col, int id);
+
+
 
 #endif
