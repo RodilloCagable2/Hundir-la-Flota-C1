@@ -202,3 +202,10 @@ void crear_barco(bar_vect *barc, juego *jug){
         confirmacion(&ctrl2);
     }while(ctrl2=='S' || ctrl2=='s');
 }
+
+void tot_barco(int *valor,bar_vect *barc){
+    int i;
+    *valor=0;
+    for(i=0;i<barc->num_tipo_bar;i++)
+        *valor+=barc->bar[i].num_bar_tipo;
+}

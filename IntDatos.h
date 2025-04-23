@@ -36,4 +36,9 @@ void cantipbar(barcos v_barcos[],int n_barcos);
 //Postcondición Añadir un barco nuevo al registro con todas sus características sin afectar a los ya establecidos
 void crear_barco(bar_vect *barc, juego *jug);
 
+//Función que cuenta el total de barcos
+//Precondición int *valor es un puntero a entero que será donde se guarda el total, bar_vect *barc es un puntero que pasa la totalidad del registro bar_vect
+//Postcondición Contar el número total de barcos y almacenarlo mediante un puntero.
+void tot_barco(int *valor,bar_vect *barc);
+
 #endif // INTDATOS_H_INCLUDED
