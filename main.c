@@ -31,8 +31,6 @@ int main() {
         return -1;
     }
 
-    //disparar_jue(&jv, &b, &j); // (comentado para pruebas o posterior uso)
-
     // Ejecutar menú principal
     resultado = menu_principal(&j, &b, &jv);
 

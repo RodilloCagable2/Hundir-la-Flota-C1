@@ -194,7 +194,7 @@ int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
     FILE *f_jue = NULL;
     char filename[] = "Juego.txt";
     char cad_linea[250];
-    char default_jue[] = "03-01-1\nS-01\n1-Defaultname1-000-M-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~\n2-Defaultname2-000-A-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~";
+    char default_jue[] = "03-01-1\nD-01\n1-Defaultname1-000-M-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~\n2-Defaultname2-000-A-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~";
     int i, fila, colum, campo_juego, len_linea;
     j->num_tipo_bar = b->num_tipo_bar;
 	
@@ -456,6 +456,69 @@ void color(int k) {
     SetConsoleTextAttribute(Consola, k);
 }
 
+int reinicio_partida(juego *j, bar_vect *b, jug_vect *jv) {
+    FILE *f_jue = NULL;
+    char filename[] = "Juego.txt";
+    int i, fila, colum;
+
+    // Reiniciar datos en memoria
+    for (i = 0; i < 2; i++) {
+        jv->jug[i].num_disp = 0;
+        jv->jug[i].ganador = 0;
+
+        for (fila = 0; fila < j->tam_tablero; fila++) {
+            for (colum = 0; colum < j->tam_tablero; colum++) {
+                jv->jug[i].tablero1[fila][colum] = '~';
+                jv->jug[i].tablero2[fila][colum] = '~';
+            }
+        }
+    }
+
+    // Abrir archivo para sobrescribirlo con estado limpio
+    f_jue = fopen(filename, "w");
+    if (f_jue == NULL) {
+        perror("Error al abrir el archivo de juego para reinicio");
+        return -1;
+    }
+
+    // Guardar cabecera reiniciada
+    fprintf(f_jue, "%02d-%02d-%d\n", j->tam_tablero, j->num_total_bar, j->num_tipo_bar);
+
+    // Guardar tipo de barcos
+    for (i = 0; i < j->num_tipo_bar; i++) {
+        fprintf(f_jue, "%c-%02d\n", b->bar[i].id_barco, j->num_bar_tipo[i]);
+    }
+
+    // Guardar estado de jugadores reiniciado
+    for (i = 0; i < 2; i++) {
+        fprintf(f_jue, "%d-%s-%03d-%c-%d\n",
+                jv->jug[i].id_jug,
+                jv->jug[i].nomb_jug,
+                jv->jug[i].num_disp,
+                jv->jug[i].tipo_disp,
+                jv->jug[i].ganador);
+
+        for (fila = 0; fila < j->tam_tablero; fila++) {
+            for (colum = 0; colum < j->tam_tablero; colum++) {
+                fprintf(f_jue, "%c", jv->jug[i].tablero1[fila][colum]);
+            }
+            fprintf(f_jue, "\n");
+        }
+
+        for (fila = 0; fila < j->tam_tablero; fila++) {
+            for (colum = 0; colum < j->tam_tablero; colum++) {
+                fprintf(f_jue, "%c", jv->jug[i].tablero2[fila][colum]);
+            }
+            fprintf(f_jue, "\n");
+        }
+    }
+
+    fclose(f_jue);
+
+    printf("Partida reiniciada con exito y datos guardados. Todo listo para jugar otra vez!!!\n");
+    return 0;
+}
+
 void resumen_partida(juego *j, jug_vect *jv) {
     int i, k, l;
     int agua, tocadas, hundidas, vacias, disparos, hundidos, restan;
@@ -579,133 +642,6 @@ void resumen_partida(juego *j, jug_vect *jv) {
     getchar();								// Espera que el usuario pulse Enter para continuar
 }
 
-int cambiar_tam_tablero(juego *j, bar_vect *b, jug_vect *jv) {
-    int i, fila, colum, nuevo_tam;
-    char resp;
-    char *nueva_fila = NULL;
-    char **nuevo_tablero1 = NULL;
-    char **nuevo_tablero2 = NULL;
-    
-    clear();
-
-    printf("Las dimensiones actuales del tablero son: %dx%d", j->tam_tablero, j->tam_tablero);
-    printf("\nDeseas actualizar el tamano del tablero? (S/N): ");
-    scanf("%c", &resp);
-    fflush(stdin);
-    confirmacion(&resp);
-	
-    if (resp == 'S' || resp == 's') {
-        printf("\n\nIntroduce el nuevo tamano del tablero (3-26): ");
-        scanf("%d", &nuevo_tam);
-        fflush(stdin);
-
-        while (nuevo_tam < 3 || nuevo_tam > 26) {
-            printf("\n\nEl tamano introducido no es valido, introduce un valor entre 3 y 26: ");
-            scanf("%d", &nuevo_tam);
-            fflush(stdin);
-        }
-
-        // Para cada jugador
-        for (i = 0; i < 2; i++) {
-            // Reasignar memoria para tablero1
-            nuevo_tablero1 = (char**)realloc(jv->jug[i].tablero1, nuevo_tam * sizeof(char*));
-            
-            if (nuevo_tablero1 == NULL) {
-                printf("\nError al reasignar memoria para el tablero1");
-                return -1;
-            }
-            
-            jv->jug[i].tablero1 = nuevo_tablero1;
-
-            for (fila = 0; fila < nuevo_tam; fila++) {
-                if (fila >= j->tam_tablero) {
-                    // Nueva fila
-                    jv->jug[i].tablero1[fila] = (char*)malloc(nuevo_tam * sizeof(char));
-                    
-                    if (jv->jug[i].tablero1[fila] == NULL) {
-                        printf("\nError al asignar nueva fila en tablero1");
-                        return -1;
-                    }
-                    
-                    for (colum = 0; colum < nuevo_tam; colum++) {
-                        jv->jug[i].tablero1[fila][colum] = '~';
-                    }
-                } 
-				else {
-                    // Fila existente, ampliar columnas
-                    nueva_fila = (char*)realloc(jv->jug[i].tablero1[fila], nuevo_tam * sizeof(char));
-                    
-                    if (nueva_fila == NULL) {
-                        printf("\nError al reasignar fila en tablero1");
-                        return -1;
-                    }
-                    
-                    jv->jug[i].tablero1[fila] = nueva_fila;
-                    
-                    for (colum = j->tam_tablero; colum < nuevo_tam; colum++) {
-                        jv->jug[i].tablero1[fila][colum] = '~';
-                    }
-                }
-            }
-
-            // Reasignar memoria para tablero2
-            nuevo_tablero2 = (char**)realloc(jv->jug[i].tablero2, nuevo_tam * sizeof(char*));
-            
-            if (nuevo_tablero2 == NULL) {
-                printf("\nError al reasignar memoria para el tablero2");
-                return -1;
-            }
-            
-            jv->jug[i].tablero2 = nuevo_tablero2;
-
-            for (fila = 0; fila < nuevo_tam; fila++) {
-                if (fila >= j->tam_tablero) {
-                    // Nueva fila
-                    jv->jug[i].tablero2[fila] = (char*)malloc(nuevo_tam * sizeof(char));
-                    
-                    if (jv->jug[i].tablero2[fila] == NULL) {
-                        printf("\nError al asignar nueva fila en tablero2");
-                        return -1;
-                    }
-                    
-                    for (colum = 0; colum < nuevo_tam; colum++) {
-                        jv->jug[i].tablero2[fila][colum] = '~';
-                    }
-                } 
-				else {
-                    // Fila existente, ampliar columnas
-                    nueva_fila = (char*)realloc(jv->jug[i].tablero2[fila], nuevo_tam * sizeof(char));
-                    
-                    if (nueva_fila == NULL) {
-                        printf("\nError al reasignar fila en tablero2");
-                        return -1;
-                    }
-                    
-                    jv->jug[i].tablero2[fila] = nueva_fila;
-                    
-                    for (colum = j->tam_tablero; colum < nuevo_tam; colum++) {
-                        jv->jug[i].tablero2[fila][colum] = '~';
-                    }
-                }
-            }
-        }
-
-        // Actualizar tamaño del tablero
-        j->tam_tablero = nuevo_tam;
-
-        // Guardar cambios
-        if (guardar_datajuego(j, b, jv) == -1) {
-            return -1;
-        }
-    } 
-	else {
-        printf("\nContinuando con el resto de la configuracion...\n");
-        Sleep(1000);
-    }
-	
-    return 0;
-}
-
 //MENÚS:
 int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 	int op,op2;
@@ -729,7 +665,6 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 		switch (op) {
 			case 1:
 				//Función que contiende todas las funciones para la introducción de datos
-				//cambiar_tam_tablero(j, b, jv);
 				intro_dat(jv, j, b);
 				break;
 
@@ -836,7 +771,7 @@ int menu_partida(juego *j, bar_vect *b, jug_vect *jv) {
 				break;
 
 			case 2:
-				//TODO: Implementar reinicio
+				reinicio_partida(j, b, jv);
 				break;
 
 			case 3:

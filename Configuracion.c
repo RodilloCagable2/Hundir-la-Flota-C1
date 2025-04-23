@@ -148,13 +148,13 @@ void intro_dat(jug_vect *jueg, juego *j, bar_vect *barc){
 	}while (op < 1 || op > 7);
     switch(op) {
         case 1:
-            //Cambiar o Introducir el nombre a un jugador
-            printf("\n================================\nSeleccione el jugador cuyo nombre desea cambiar: [1] [2]\n");
-            //Bucle que se asegura de que se escoja un jugador valido
-            do{
-                scanf("%d",&op2);
-                if(op2!=1 && op2!=2) printf("El valor introducido no es válido, por favor intentelo de nuevo: \n");
-            }while(op2!=1 && op2!=2);
+            //Cambiar o introducir el nombre a un jugador
+            do {
+            	printf("\n================================\nSeleccione el jugador cuyo nombre desea cambiar: [1] [2]\n");
+            	scanf("%d", &op2);
+            	fflush(stdin);
+			}while(op2 < 1 || op2 > 2);
+            
             op2 = op2 - 1;
             int_nombre(jueg->jug[op2].nomb_jug);
             break;
@@ -189,7 +189,7 @@ void intro_dat(jug_vect *jueg, juego *j, bar_vect *barc){
         case 4:
             //Modificar las dimensiones del tablero
             auxi=0;
-            tam_tab(barc->bar,barc->num_tipo_bar,&auxi);
+            tam_tab(j, barc, jueg);
             j->tam_tablero=auxi;
             break;
         case 5:

@@ -29,7 +29,7 @@ void colocar_barcos_manual(bar_vect*, juego*, jug_vect*, int);
 //Cabecera: void mostrar_info_barcos(bar_vec v_barcos)
 //Precondición: la variable v_barcos no debe ser nula
 //Postcondición: muestra la información de todos los barcos que debe colocar el usuario
-void mostrar_info_barcos(bar_vect*);
+void mostrar_info_barcos(bar_vect*, juego *);
 
 
 //Cabecera: void mostrar_tablero(juego*, jug_vect*, int)

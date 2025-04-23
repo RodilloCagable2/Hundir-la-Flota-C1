@@ -111,11 +111,13 @@ int guardar_datajuego(juego *, bar_vect *, jug_vect *);
 
 void color(int);
 
+// PRECONDICIÓN: j, b y jv correctamente inicializados. Tableros ya reservados
+// POSCONDICIÓN: Disparos, ganadores y tableros de ambos jugadores reiniciados. Juego listo para nueva partida. Retorna 0 si ok, -1 si error
+int reinicio_partida(juego *, bar_vect *, jug_vect *);
+
 // PRECONDICIÓN: j y jv deben ser punteros válidos que apunten a estructuras correctamente inicializadas
 // POSCONDICIÓN: Muestra en pantalla un resumen de la partida con estadísticas de disparos, aciertos y tablero final
 void resumen_partida(juego *, jug_vect *);
-
-int cambiar_tam_tablero(juego *, bar_vect *, jug_vect *);
 
 //---> MENÚS: <---
 

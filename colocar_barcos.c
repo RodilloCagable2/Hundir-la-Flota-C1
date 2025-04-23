@@ -10,7 +10,6 @@
 #include "colocar_barcos.h"
 #include "Complementos.h"
 
-
 void jug_colocar_barcos(bar_vect *v_barcos, juego *jug, jug_vect *j_vect){
     printf("inicio");
     int i, id;
@@ -52,7 +51,7 @@ void colocar_barcos_manual(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, int
     do{
         //clear();
         //printf("total: %d ", total);
-        mostrar_info_barcos(v_barcos);  //mostramos por  pantalla todos los barcos que se deben colocar y su tamaño
+        mostrar_info_barcos(v_barcos, jug);  //mostramos por  pantalla todos los barcos que se deben colocar y su tamaño
         //volvemos a cargar los datos del fichero para tener la ultima actualizacion del tablero 
         car=cargar_datajuego(jug, v_barcos, j_vect);
         
@@ -150,12 +149,12 @@ void colocar_barcos_manual(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, int
 
 }    
 
-void mostrar_info_barcos(bar_vect *v_barcos){
+void mostrar_info_barcos(bar_vect *v_barcos, juego *j){
     int i;
-    printf("BARCOS DE LA FLOTA \n");
-    printf("ID  -   NOMBRE  -   TAMANIO  -   CANTIDAD\n");
-    for(i=0;i<v_barcos->num_tipo_bar;i++){
-        printf("%c  -   %s  -   %d  -   %d \n", v_barcos->bar[i].id_barco, v_barcos->bar[i].nomb_barco, v_barcos->bar[i].tam_barco, v_barcos->bar[i].num_bar_tipo);
+    printf("  BARCOS DE LA FLOTA \n");
+    printf("ID  -   NOMBRE  -   TAMANIO  -  CANTIDAD\n");
+    for(i = 0; i < v_barcos->num_tipo_bar; i++) {
+        printf("%c  -   %s  -   %d  -   %d \n", v_barcos->bar[i].id_barco, v_barcos->bar[i].nomb_barco, v_barcos->bar[i].tam_barco, j->num_bar_tipo[i]);
     }
 
 }
