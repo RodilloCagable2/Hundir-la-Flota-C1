@@ -197,10 +197,14 @@ void intro_dat(jug_vect *jueg, juego *j,bar_vect *barc){
             case 5:
                 //Modificar la cantidad de barcos de cada tipo
                 cantipbar(barc->bar,barc->num_tipo_bar);
+                tot_barco(&auxi);
+                j->num_total_bar=auxi;
                 break;
             case 6:
                 //Crear barcos nuevos
                 crear_barco(barc,j);
+                tot_barco(&auxi);
+                j->num_total_bar=auxi;
                 break;
         }
         printf("\n================================\nDesea hacer algo mas? [S] [N]\n");
