@@ -365,7 +365,7 @@ void colocar_barco_automatico(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, 
             fila=rand()%jug->tam_tablero;           //generamos la coordenada x
             colum=rand()%jug->tam_tablero;          //generamos la coordenada y
 
-            //calculamos la direccion en la que se va a colocar el barco                
+            //calculamos la direccion en la que se va a colocar el barco
             dir=(rand()%7)+1 ;  //hay ocho direcciones posibles
 
             fflush(stdout);
@@ -456,7 +456,3 @@ int alrededor_barco(juego *jug, jug_vect *j_vect, int fila, int col, int id){
     }
     return 0;
 }
-
-
-
-

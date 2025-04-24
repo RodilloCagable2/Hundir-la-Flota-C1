@@ -1,0 +1,83 @@
+# depslib dependency file v1.0
+1745481232 source:c:\users\alexm\desktop\hlf\colocar_barcos.c
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<time.h>
+	<math.h>
+	"MenuP.h"
+	"colocar_barcos.h"
+	"Complementos.h"
+	"Configuracion.h"
+
+1745476497 c:\users\alexm\desktop\hlf\menup.h
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<windows.h>
+
+1745476496 c:\users\alexm\desktop\hlf\colocar_barcos.h
+	"MenuP.h"
+
+1745476496 c:\users\alexm\desktop\hlf\complementos.h
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<time.h>
+
+1745476497 c:\users\alexm\desktop\hlf\disparar.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<conio.h>
+	<windows.h>
+	<time.h>
+	"MenuP.h"
+	"Complementos.h"
+
+1745476496 source:c:\users\alexm\desktop\hlf\complementos.c
+	"Complementos.h"
+
+1745476497 source:c:\users\alexm\desktop\hlf\disparar.c
+	"MenuP.h"
+	"disparar.h"
+
+1745480394 source:c:\users\alexm\desktop\hlf\intdatos.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"MenuP.h"
+	"Complementos.h"
+	"IntDatos.h"
+
+1745476497 c:\users\alexm\desktop\hlf\intdatos.h
+	"MenuP.h"
+
+1745476499 source:c:\users\alexm\desktop\hlf\main.c
+	<windows.h>
+	"MenuP.h"
+	"Complementos.h"
+	"Configuracion.h"
+	"IntDatos.h"
+	"disparar.h"
+
+1745476497 c:\users\alexm\desktop\hlf\configuracion.h
+	"MenuP.h"
+
+1745481232 source:c:\users\alexm\desktop\hlf\menup.c
+	"MenuP.h"
+	"Complementos.h"
+	"Configuracion.h"
+	"IntDatos.h"
+	"colocar_barcos.h"
+	"disparar.h"
+
+1745480576 source:c:\users\alexm\desktop\hlf\configuracion.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"MenuP.h"
+	"Complementos.h"
+	"Configuracion.h"
+	"IntDatos.h"
+
