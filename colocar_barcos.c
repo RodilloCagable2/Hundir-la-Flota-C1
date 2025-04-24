@@ -9,20 +9,18 @@
 #include "MenuP.h"
 #include "colocar_barcos.h"
 #include "Complementos.h"
-#include "disparar.h"
+#include "Configuracion.h"
+
 
 void jug_colocar_barcos(bar_vect *v_barcos, juego *jug, jug_vect *j_vect){
-    printf("inicio");
     int i, id;
     char d;
+
     printf("COLOCAR BARCOS");
     for(i=0;i<2;i++){
-        
-        id=j_vect->jug[i].id_jug - 1;
+        id=j_vect->jug[i].id_jug -1;
         d=j_vect->jug[i].tipo_disp;
-        //printf("tipo disparo: %c", d);
         if(d=='M'){
-            //printf("llega a usuario");
             colocar_barcos_manual(v_barcos,jug,j_vect, id);
         }
         else{
@@ -30,19 +28,23 @@ void jug_colocar_barcos(bar_vect *v_barcos, juego *jug, jug_vect *j_vect){
             colocar_barco_automatico(v_barcos, jug, j_vect, id);
         }
     }
-    
+
     disparar_jue(j_vect, v_barcos, jug);
 }
 
+
 void colocar_barcos_manual(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, int id_jug){
     //otras variables
-    int i, id_encontrada, total, cont, fila, colum, tam, dir, sol, j, x_aux, y_aux, car;
-    char id_b;     //id_b almacena la id del barco seleccionado por el usuario 
+    int i, j, k, cont,
+        id_encontrada, pos_barco,
+        fila, colum, tam, dir, sol, x_aux, y_aux, car, op=0, 
+        continuar=1, total, barcos_colocados=0;
+
+    char id_barco;     //id_barco almacena la id del barco seleccionado por el usuario 
     double porcentaje;
 
        
     total=jug->num_total_bar; //contador para ir restando cada vez que coloquemos un barco
-    
     
 
     int num_tipo_col[v_barcos->num_tipo_bar];   //creamos un vector en el que cada posicion almacenará cuantos barcos de ese tipo se han colocado ya
@@ -53,114 +55,143 @@ void colocar_barcos_manual(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, int
     //se pregunta al usuario que introduzca una id tantas veces como barcos hay5
     do{
         //clear();
-        //printf("total: %d ", total);
-        mostrar_info_barcos(v_barcos, jug);  //mostramos por  pantalla todos los barcos que se deben colocar y su tamaño
+        mostrar_barcos(v_barcos);  //mostramos por  pantalla todos los barcos que se deben colocar y su tamaño
         //volvemos a cargar los datos del fichero para tener la ultima actualizacion del tablero 
         car=cargar_datajuego(jug, v_barcos, j_vect);
         
         printf("TABLERO ACTUAL\n");
         mostrar_tablero(jug, j_vect, id_jug);
+        
 
         //comprobamos si la id seleccionada por el usuario es valida
         printf("\nINTRODUCE UNA ID VALIDA\n");
-        scanf("%c", &id_b);
+        scanf(" %c", &id_barco);
         fflush(stdin);
-        printf("%c");
-        id_encontrada=id_valida(id_b, v_barcos);
+        id_encontrada=id_valida(id_barco, v_barcos);
 
-        if(id_encontrada == 0)
+        if(id_encontrada == 0){
             printf("--- NO ES UNA ID VALIDA, INTENTELO DE NUEVO ---\n");
-        
-        
-        //comprobamos si ya se han colocado todos los barcos de ese tipo
-        for(i=0;i<v_barcos->num_tipo_bar;i++){
-            if(v_barcos->bar[i].id_barco==id_b){
-                //comprobamos si quedan disponibles barcos de ese tipo
-                //printf("%c - %d\n", v_barcos->bar[i].id_barco, v_barcos->bar[i].num_bar_tipo );
-                //printf("vector num_tipo_col: %d\n", num_tipo_col[i]);
-                if(num_tipo_col[i]<v_barcos->bar[i].num_bar_tipo){
-                    printf("INTRODUCE LA PRIMERA COORDENADA: \n");
-                    printf("- (FILA): ");
-                    scanf("%d", &fila);
-                    printf("- (COLUMNA): ");
-                    scanf("%d", &colum);
-
-                    printf("INTRODUCE LA DIRECCIÓN EN LA QUE VAS A COLOCAR EL BARCO \n");
-                    printf("    1. NORTE\n");
-                    printf("    2. SUR\n");
-                    printf("    3. ESTE\n");
-                    printf("    4. OESTE\n");
-                    printf("    5. NORESTE\n");
-                    printf("    6. NOROESTE\n");
-                    printf("    7. SURESTE\n");
-                    printf("    8. SUROESTE\n");
-                    dir = input_int();
-
-                    tam=v_barcos->bar[i].tam_barco;
-                    printf("direccion elegida: %d\n", dir);
-                    printf("tamaño del barco elegido: %d\n", tam);
-                    coordenada c[tam]; //vector del tamaño del barco en cada posicion hay una coordenada del barco
-                    //printf("crea c\n");
-                    sol=calcular_coordenadas(fila, colum, dir, c, tam, jug, j_vect, id_jug);
-                    //printf("todas coordenadas son correctas?: %d", sol);
-                    
-                    if(sol==1){
-                        //colocar barco en el tablero flota
-                        for(j=0;j<tam;j++){
-                            /*printf("coordenadas en c\n");
-                            printf("coordenada x en c: %d\n", c[j].fila);
-                            printf("coordenada y en c: %d\n", c[j].colum);*/
-
-                            fila=c[j].fila;
-                            colum=c[j].colum;
-                            
-                            j_vect->jug[id_jug].tablero1[fila][colum]='X';
-                        }
-
-                        
-                        guardar_datajuego(jug, v_barcos, j_vect);   //se guarda en el fichero el tablero modificado
-
-                        printf("TABLERO DESPUES DE COLOCAR EL BARCO: \n");
-                        mostrar_tablero(jug, j_vect, id_jug);
-                        num_tipo_col[i]++;            //aumentamos el numero de barcos colocados de ese tipo
-                        total--;
-
-
-                        //despues de colocar el barco, calculamos el porcentaje de tablero ocupado para que ya no deje colocar mas barcos
-                        car=cargar_datajuego(jug, v_barcos, j_vect);
-                        porcentaje=porcentaje_tablero(jug, j_vect, id_jug);
-                        //printf("PORCENTAJE: %f\n", porcentaje);
-                        if(porcentaje>70){
-                            printf("- NO ES POSIBLE COLOCAR MAS BARCOS - \n");
-                            printf("    - el tablero no dispone de suficiente espacio\n");
-                        }
-
-                    }
-                    else{
-                        printf("LA COORDENADA ES INCORRECTA - INTENTELO DE NUEVO\n");
-                    }
-
-                }
-                else{
-                    printf("YA SE HAN COLOCADO TODOS LOS BARCOS DE ESE TIPO - INTRODUCE OTRO BARCO\n");
+        }
+        else{
+            for(i=0;i<v_barcos->num_tipo_bar;i++){
+                if(v_barcos->bar[i].id_barco==id_barco){
+                    pos_barco = i; //almacenamos la posicion del barco en el vector de barcos
                 }
             }
         }
-        
-    }while(total > 0 && porcentaje<70);
 
+        //comprobamos si quedan disponibles barcos de ese tipo
+        if(num_tipo_col[pos_barco]<v_barcos->bar[pos_barco].num_bar_tipo && id_encontrada==1){
+            printf("INTRODUCE LA PRIMERA COORDENADA: \n");
+            printf("- (FILA): ");
+            fila = input_int();
+            printf("- (COLUMNA): ");
+            colum = input_int();
+
+            printf("INTRODUCE LA DIRECCIÓN EN LA QUE VAS A COLOCAR EL BARCO \n");
+            printf("    1. NORTE\n");
+            printf("    2. SUR\n");
+            printf("    3. ESTE\n");
+            printf("    4. OESTE\n");
+            printf("    5. NORESTE\n");
+            printf("    6. NOROESTE\n");
+            printf("    7. SURESTE\n"); 
+            printf("    8. SUROESTE\n");
+            do{
+                dir = input_int();
+                if (dir < 1 || dir > 8) {
+                    printf("DIRECCION INCORRECTA - INTRODUCE UNA DIRECCION VALIDA\n");
+                }
+            } while (dir<1 || dir>8);
+            
+            
+
+            tam=v_barcos->bar[pos_barco].tam_barco;
+            printf("- DIRECCION ELEGIDA: %d\n", dir);
+            printf("- LONGITUD DEL BARCO ELEGIDO: %d\n", tam);
+            coordenada c[tam]; //vector del tamaño del barco en cada posicion hay una coordenada del barco
+            sol=calcular_coordenadas(fila, colum, dir, c, tam, jug, j_vect, id_jug);
+            
+            if(sol==1){
+                //colocar barco en el tablero flota
+                for(j=0;j<tam;j++){
+                    fila=c[j].fila;
+                    colum=c[j].colum;
+                    
+                    j_vect->jug[id_jug].tablero1[fila][colum]='X';
+                }
+
+                
+                guardar_datajuego(jug, v_barcos, j_vect);   //se guarda en el fichero el tablero modificado
+
+                printf("TABLERO DESPUES DE COLOCAR EL BARCO: \n");
+                mostrar_tablero(jug, j_vect, id_jug);
+                num_tipo_col[pos_barco]++;            //aumentamos el numero de barcos colocados de ese tipo
+                total--;
+
+
+                //despues de colocar el barco, calculamos el porcentaje de tablero ocupado para que ya no deje colocar mas barcos
+                porcentaje=porcentaje_tablero(jug, j_vect, id_jug);
+                
+                printf("PORCENTAJE: %f\n", porcentaje);
+                if(porcentaje>80){
+                    printf("          - NO ES POSIBLE COLOCAR MAS BARCOS - \n");
+                    printf("    - el tablero no dispone de suficiente espacio - \n");
+                }
+                
+
+
+                //preguntamos si el usuario quiere empezar de nuevo
+                do{
+                    printf("¿DESEA EMPEZAR DE NUEVO LA COLOCACIÓN DE BARCOS?:\n");
+                    printf("    - 1. SI\n");
+                    printf("    - 2. NO\n");
+                    op = input_int();
+
+                    if(op==1){
+                    reestablecer_tablero(jug, j_vect, id_jug, v_barcos);
+                    total=jug->num_total_bar;    //reestablecemos el valor de total
+                    porcentaje=0.0; 
+                            //reestablecemos el vector que almacenaba el contador de barcos de cada tipo colcoados
+                        for (k = 0; k < v_barcos->num_tipo_bar; k++) {
+                                num_tipo_col[k] = 0; // Inicializamos manualmente cada posición a 0
+                            }
+
+                        }
+                    }while(op<1 || op>2);
+                
+            }
+            else{
+                printf("LA COORDENADA ES INCORRECTA - INTENTELO DE NUEVO\n");
+            }
+        }
+        else{
+            printf("YA SE HAN COLOCADO TODOS LOS BARCOS DE ESE TIPO - INTRODUCE OTRO BARCO\n");
+        }
+        
+    }while(total > 0 && porcentaje<80);
+
+    printf("HA TERMINADO DE COLOCAR LOS BARCOS EL JUGADOR CON ID: %d\n", id_jug);
 
 }    
 
-void mostrar_info_barcos(bar_vect *v_barcos, juego *j){
-    int i;
-    printf("  BARCOS DE LA FLOTA \n");
-    printf("ID  -   NOMBRE  -   TAMANIO  -  CANTIDAD\n");
-    for(i = 0; i < v_barcos->num_tipo_bar; i++) {
-        printf("%c  -   %s  -   %d  -   %d \n", v_barcos->bar[i].id_barco, v_barcos->bar[i].nomb_barco, v_barcos->bar[i].tam_barco, j->num_bar_tipo[i]);
+
+void reestablecer_tablero(juego*jug, jug_vect *j_vect, int id_jug, bar_vect *v_barcos){
+    int i, j;
+
+    for(i=0;i<jug->tam_tablero;i++){
+        for(j=0;j<jug->tam_tablero;j++){
+            j_vect->jug[id_jug].tablero1[i][j]='-';
+        }
     }
 
+    mostrar_tablero(jug, j_vect, id_jug);
+    guardar_datajuego(jug, v_barcos, j_vect);
+    mostrar_tablero(jug, j_vect, id_jug);
 }
+
+
+
 
 void mostrar_tablero(juego*jug, jug_vect *j_vect, int id_jug){
     int k, l;
@@ -186,19 +217,16 @@ int id_valida(char id_b, bar_vect* v_barcos){
 
 int calcular_coordenadas(int fila, int colum,int dir, coordenada *c, int tam, juego *jug, jug_vect *j_vect, int id_jug){
     int i, valida=0; 
-    //printf("COMPROBAR COORDENADAS\n");
+
     //comprobamos la primera coordenada
     valida=comprobar_coordenada(fila, colum, jug, j_vect, id_jug);
-    printf("primera coordenada correcta?: %d\n", valida);
+
     if(valida==1){
         //la primera cordenada es correcta
         c[0].fila=fila;
         c[0].colum=colum;
-        //printf("entra en comprobar mas a alla de primera coordenada\n");
         //comprobamos las siguientes coordenadas
         for(i=1;i<tam;i++){
-            //printf("COORDENADAS PARA VALIDAR\n");
-            //printf("numero coordenada: %d+1\n", i);
             valida=0;
             switch(dir){
                 case 1:
@@ -231,11 +259,8 @@ int calcular_coordenadas(int fila, int colum,int dir, coordenada *c, int tam, ju
                     break;
         
             }
-            //printf("columna: %d\n", colum);
-            //printf("fila: %d\n", fila);
             //comprobamos si la siguiente coordenada es correcta    
             valida=comprobar_coordenada(fila, colum, jug, j_vect, id_jug);
-            //printf("%d coordenada es correcta?: %d\n", i+1, valida);
 
             if(valida==1){
                 //si es correcta la añadimos al vector
@@ -244,7 +269,6 @@ int calcular_coordenadas(int fila, int colum,int dir, coordenada *c, int tam, ju
             }
             else{
                 //si no es correcta devolvemos cero para no comprobar las siguientes
-                //printf("una coordenada ya es incorrecta\n");
                 return 0;
             }
         }
@@ -254,44 +278,39 @@ int calcular_coordenadas(int fila, int colum,int dir, coordenada *c, int tam, ju
     }
     else{
         //la primera coordenada es incorrecta
-        //printf("primera coordenada incorrecta\n");
         return 0;
     }
     
 }
+
 
 int comprobar_coordenada(int fila, int colum, juego *jug, jug_vect *j_vect, int id_jug){
 
     int i, j;
     int aux_colum, aux_fila;
    
-    //printf("llega a comprobar coordenada\n");
     //comprobamos si las coordenadas estan dentro de los limites del tablero
     if(fila>=jug->tam_tablero || colum>=jug->tam_tablero || fila<0 || colum<0){
         printf("- SUPERA LOS LIMITES DEL TABLERO - \n");
         return 0;
     }
-    //printf("dentro de los limites del tablero\n");
-    //comprobamos si ya hay un barco en esa coordenada
-    //printf("fila: %d\n", fila);
-    //printf("columna: %d\n", colum);
 
+    //comprobamos si ya hay un barco en esa coordenada
     if(j_vect->jug[id_jug].tablero1[fila][colum]=='X'){
         printf("- YA EXISTE UN BARCO - ");
         return 0;
         
     }
-    //printf("No sobreescribe un barco\n");
+
+
     //comprobamos que no hay barcos alrededor de esa coordenada
     for(i=-1;i<=1;i++){
         aux_fila = fila+i;
         for(j=-1;j<=1;j++){
             aux_colum = colum+j;
             
-            if(aux_fila >= 0 && aux_fila< jug->tam_tablero && aux_colum >=0  && aux_colum < jug->tam_tablero /*!(aux_fila==fila && aux_fila==fila)*/){
-                /*printf("aux_fila:%d\n", aux_fila);
-                printf("aux_colum:%d\n", aux_colum);
-                printf("casilla: %c\n", j_vect->jug[id_jug].tablero1[aux_fila][aux_colum]);*/
+            if(aux_fila >= 0 && aux_fila< jug->tam_tablero && aux_colum >=0  && aux_colum < jug->tam_tablero){
+
                 if(j_vect->jug[id_jug].tablero1[aux_fila][aux_colum]=='X'){
                     printf("- AL LADO DE ESA COORDENADA SE ENCUENTRA UN BARCO\n");
                     return 0;
@@ -301,10 +320,11 @@ int comprobar_coordenada(int fila, int colum, juego *jug, jug_vect *j_vect, int 
         }
     }
 
-    //printf("Posicion es valida\n");
     return 1; 
 
 }
+
+
 
 void colocar_barco_automatico(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, int id_jug){
     
@@ -315,7 +335,7 @@ void colocar_barco_automatico(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, 
 
     //calculamos la secuencia de valores aleatorios
     //semilla 
-    srand(100);
+    srand(time(NULL));
 
     //creamos un vector en el que cada posicion almacenará cuantod barcos de ese tipo se han colocado ya
     int num_tipo_col[v_barcos->num_tipo_bar];
@@ -348,12 +368,7 @@ void colocar_barco_automatico(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, 
             //calculamos la direccion en la que se va a colocar el barco                //hay ocho direcciones posibles
             dir=(rand()%7)+1 ;
 
-            /*printf("fila: %d\n", fila);
-            printf("columna: %d\n", colum);
-            printf("direccion: %d\n", dir);*/
             fflush(stdout);
-            /*printf("barco a colocar: %s\n", v_barcos->bar[pos].nomb_barco);
-            printf("id: %c\n",v_barcos->bar[pos].id_barco);*/
 
 
             tam=v_barcos->bar[pos].tam_barco;
@@ -379,23 +394,26 @@ void colocar_barco_automatico(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, 
                 total--; 
 
                 //despues de colocar el barco, calculamos el porcentaje de tablero ocupado para que ya no deje colocar mas barcos
-                /*porcentaje=porcentaje_tablero(jug, j_vect, id_jug);
-                if(porcentaje>70){
+                porcentaje=porcentaje_tablero(jug, j_vect, id_jug);
+                if(porcentaje>80){
                     printf("- NO ES POSIBLE COLOCAR MAS BARCOS - \n");
                     printf("    - el tablero no dispone de suficiente espacio\n");
-                }*/
+                }
             }
 
-            else{
-                printf("la coordenada es incorrecta\n");
-            }
+            
         }
-        else{
-            printf("ya se han colocado todos los barcos de ese tipo\n");
-        }
+        
 
-    }while(total>0 /*&& porcentaje<70*/);   
+    }while(total>0 && porcentaje<80);
+        
+
+    printf("HA TERMINADO DE COLOCAR LOS BARCOS EL JUGADOR CON LA OPCION AUTOMATICA\n");
+    
+
+    
 }
+
 
 double porcentaje_tablero(juego *jug, jug_vect*j_vect, int id){
     int i, j, sol, cont=0;     //cont almacena el numero de posiciones ocupadas de un tablero
@@ -404,31 +422,20 @@ double porcentaje_tablero(juego *jug, jug_vect*j_vect, int id){
     
     for(i=0;i<jug->tam_tablero;i++){
         for(j=0;j<jug->tam_tablero;j++){
-            /*printf("fila: %d\n", i);
-            printf("columna: %d\n", j);*/
             sol=alrededor_barco(jug, j_vect, i, j, id);
-            //printf("sol: %d\n", sol);
             if(sol==1 || j_vect->jug[id].tablero1[i][j]=='X'){
                 cont++;
-                //printf("cont: %d\n", cont);
             }
         }
     }
 
-    //printf("contador casillas ocupadas: %d\n", cont);
     tam=pow(jug->tam_tablero,2);
-    //printf("tam: %f\n", tam);
     aux=cont*100.0;
-    //printf("aux:%f\n",aux);
     porcentaje=aux/tam;
-    //printf("porcentaje:%f\n", porcentaje);
-
-
 
     return porcentaje;
-
-
 }
+
 
 int alrededor_barco(juego *jug, jug_vect *j_vect, int fila, int col, int id){
     int i, j, aux_fila, aux_colum;
@@ -436,15 +443,11 @@ int alrededor_barco(juego *jug, jug_vect *j_vect, int fila, int col, int id){
         aux_fila=fila+i;
         for(j=-1;j<=1;j++){
             aux_colum=col+j;
-            /*printf("fila alrededor: %d\n", aux_fila);
-            printf("columna alrededor: %d\n", aux_colum);*/
 
-            if(aux_fila >= 0 && aux_fila< jug->tam_tablero && aux_colum >=0  && aux_colum < jug->tam_tablero /*&& !(aux_fila==fila && aux_colum==col*/){
-                //printf("dentro tablero\n");
+            if(aux_fila >= 0 && aux_fila< jug->tam_tablero && aux_colum >=0  && aux_colum < jug->tam_tablero){
+
+
                 if(j_vect->jug[id].tablero1[aux_fila][aux_colum]=='X'){
-                    //printf("hay un barco en esa posicion\n");
-                    //printf("encuentra un barco alrededor\n");
-                    //printf("devuelve 1\n");
                     return 1;
                 }
             }
@@ -453,3 +456,8 @@ int alrededor_barco(juego *jug, jug_vect *j_vect, int fila, int col, int id){
     }
     return 0;
 }
+
+
+
+
+
