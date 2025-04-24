@@ -21,6 +21,7 @@ void jug_colocar_barcos(bar_vect *v_barcos, juego *jug, jug_vect *j_vect){
         id=j_vect->jug[i].id_jug -1;
         d=j_vect->jug[i].tipo_disp;
         if(d=='M'){
+            //llamara a la funcion colocar barcos de forma manual
             colocar_barcos_manual(v_barcos,jug,j_vect, id);
         }
         else{
@@ -51,7 +52,7 @@ void colocar_barcos_manual(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, int
         num_tipo_col[i] = 0; // Inicializamos manualmente cada posición a 0
     }
 
-    //se pregunta al usuario que introduzca una id tantas veces como barcos hay5
+    //se pregunta al usuario que introduzca una id tantas veces como barcos hay
     do{
         //clear();
         mostrar_barcos(v_barcos);  //mostramos por  pantalla todos los barcos que se deben colocar y su tamaño
@@ -364,8 +365,8 @@ void colocar_barco_automatico(bar_vect *v_barcos, juego *jug, jug_vect *j_vect, 
             fila=rand()%jug->tam_tablero;           //generamos la coordenada x
             colum=rand()%jug->tam_tablero;          //generamos la coordenada y
 
-            //calculamos la direccion en la que se va a colocar el barco                //hay ocho direcciones posibles
-            dir=(rand()%7)+1 ;
+            //calculamos la direccion en la que se va a colocar el barco                
+            dir=(rand()%7)+1 ;  //hay ocho direcciones posibles
 
             fflush(stdout);
 
