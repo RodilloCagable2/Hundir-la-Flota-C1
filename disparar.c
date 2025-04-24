@@ -437,9 +437,17 @@ void disparar_jue(jug_vect *jv, bar_vect *bv, juego *j) {
     int cursorX[2] = {0, 0}, cursorY[2] = {0, 0}; // Cursores de cada jugador
     int posX[2], posY[2], auxX[2], auxY[2]; //Cursores para el funcionamiento de la Cpu
     int aciertoPrevioCpu[2] = {0,0}, continuarDireccion[2] = {0,0};
-    int turno = 0, turnoOpuesto = 1;
+    int turno, turnoOpuesto = 1;
     int barcosRestantes[2] = {j->num_total_bar, j->num_total_bar};
-
+	
+	// Selección de turno
+	if (jv->jug[0].comienza == 1) {
+		turno = 0;
+	}
+	if (jv->jug[1].comienza == 1) {
+		turno = 1;
+	}
+	
     if (jv->jug[0].num_disp == 0){ // Inicializa el número de barcos y de hundidos solo si la partida ha comenzado
         jv->jug[0].hundidos = 0;
         jv->jug[1].hundidos = 0;

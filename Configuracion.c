@@ -129,7 +129,7 @@ void mostrar_config(jug_vect *j,juego *jueg){
 void intro_dat(jug_vect *jueg, juego *j, bar_vect *barc){
     int op,op2,auxi;
     char auxc;
-
+    
     op2=0;
     //Menu que le muestra al jugador las opciones y no le deja salir hasta que la op indique una de las opciones
     do {
@@ -154,7 +154,7 @@ void intro_dat(jug_vect *jueg, juego *j, bar_vect *barc){
             	scanf("%d", &op2);
             	fflush(stdin);
 			}while(op2 < 1 || op2 > 2);
-
+            
             op2 = op2 - 1;
             int_nombre(jueg->jug[op2].nomb_jug);
             break;
@@ -196,17 +196,18 @@ void intro_dat(jug_vect *jueg, juego *j, bar_vect *barc){
             //Modificar la cantidad de barcos de cada tipo
             cantipbar(barc->bar,barc->num_tipo_bar);
             tot_barco(&auxi, barc);
+            j->num_total_bar=auxi;
             break;
         case 6:
             //Crear barcos nuevos
-            crear_barco(barc, jueg, j); //void crear_barco(bar_vect *barc, juego *jug, jug_vect *jv)
+            crear_barco(barc, j);
             tot_barco(&auxi, barc);
             j->num_total_bar=auxi;
             break;
         case 7:
  				printf("\nVolviendo al menu principal...\n");
 				Sleep(1000);
-
+				
 				menu_principal(j, barc, jueg);
         	break;
         default:

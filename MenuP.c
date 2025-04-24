@@ -147,9 +147,10 @@ int cargar_barcos(bar_vect *b) {
 			b->bar[i].nomb_barco,
 			&b->bar[i].id_barco,
 			&b->bar[i].tam_barco);
-        if (campo_barcos != 3 ||
-			!validar_nombre(b->bar[i].nomb_barco) ||
-			!validar_id_barco(b->bar[i].id_barco) ||
+
+        if (campo_barcos != 3 || 
+			!validar_nombre(b->bar[i].nomb_barco) || 
+			!validar_id_barco(b->bar[i].id_barco) || 
 			!validar_tam_barco(b->bar[i].tam_barco)) {
             printf("Error en los datos del barco %d\n", i + 1);
             liberar_barcos(b);
@@ -196,7 +197,7 @@ int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
     char default_jue[] = "03-01-1\nD-01\n1-Defaultname1-000-M-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~\n2-Defaultname2-000-A-0\n~X~\n~~~\n~~~\n~~~\n~~~\n~~~";
     int i, fila, colum, campo_juego, len_linea;
     j->num_tipo_bar = b->num_tipo_bar;
-
+	
     // Intentar abrir el archivo
     f_jue = fopen(filename, "r");
 
@@ -231,11 +232,11 @@ int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
             perror("Error al abrir el archivo de juego");
             return -1;
         }
-    }
+    } 
 	else {
         rewind(f_jue);
     }
-
+	
 	// Leer cabecera del juego
     if (fgets(cad_linea, sizeof(cad_linea), f_jue)) {
         campo_juego = sscanf(cad_linea, "%d-%d-%d", &j->tam_tablero, &j->num_total_bar, &j->num_tipo_bar);
@@ -245,7 +246,7 @@ int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
             return -1;
         }
     }
-
+	
     // Asignar memoria para cantidad de barcos
     j->num_bar_tipo = (int*)malloc(j->num_tipo_bar * sizeof(int));
     if (j->num_bar_tipo == NULL) {
@@ -253,7 +254,7 @@ int cargar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
         fclose(f_jue);
         return -1;
     }
-
+	
     // Cargar información de tipos de barcos
     for (i = 0; i < j->num_tipo_bar; i++) {
         if (!fgets(cad_linea, sizeof(cad_linea), f_jue)) {
@@ -388,7 +389,7 @@ int guardar_datajuego(juego *j, bar_vect *b, jug_vect *jv) {
         fclose(f_jue);
         return -1;
     }
-
+	
     // Guardar datos de los tipos de barcos
     for (i = 0; i < j->num_tipo_bar; i++) {
         if (fprintf(f_jue, "%c-%02d\n", b->bar[i].id_barco, j->num_bar_tipo[i]) < 0) {
@@ -537,26 +538,26 @@ void resumen_partida(juego *j, jug_vect *jv) {
         disparos = jv->jug[i].num_disp;
         hundidos = jv->jug[i].hundidos;
         restan = j->num_total_bar - hundidos;
-
+		
 		// Analiza el tablero del oponente donde se han realizado los disparos
         for (k = 0; k < tam; k++) {
             for (l = 0; l < tam; l++) {
                 char c = jv->jug[i].tablero2[k][l];
                 if (c == '*') {
-                	agua++;
+                	agua++;		
 				}
                 else if (c == 'X') {
-                	tocadas++;
+                	tocadas++;	
 				}
                 else if (c == 'H') {
-					hundidas++;
+					hundidas++;	
 				}
                 else if (c == '|') {
                 	vacias++;
 				}
         	}
         }
-
+		
 		// Muestra la fila de estadísticas para el jugador actual
         printf("    │ Jugador%-1d│%8d│%6d│%4d│%7d│%8d│%8d│%6d│%7d│\n",
 			i + 1, disparos, vacias, agua, tocadas, hundidas, hundidos, restan, jv->jug[i].ganador);
@@ -568,39 +569,39 @@ void resumen_partida(juego *j, jug_vect *jv) {
     for (i = 0; i < 2; i++) {
         printf("Jugador%d:\n", i + 1);
         printf("     FLOTA                         OPONENTE\n");
-
+		
 		// Imprime cabeceras de los tableros (índices de columnas)
         printf("     ");
-
+        
         for (k = 0; k < tam; k++) {
         	printf("|%d", k);
 		}
-
+		
         printf("          ");
-
+        
         for (k = 0; k < tam; k++) {
         	printf("|%d", k);
 		}
-
+		
         printf("\n");
         printf("   --");
-
+        
         for (k = 0; k < tam; k++) {
         	printf("|-");
 		}
-
+		
         printf("        --");
-
+        
         for (k = 0; k < tam; k++) {
         	printf("|-");
 		}
-
+		
         printf("\n");
-
+        
         // Recorre cada fila de los tableros
         for (k = 0; k < tam; k++) {
             printf("   %c ", 'A' + k);		// Letra para la fila izquierda (FLOTA)
-
+			
 			// Imprime tablero de la flota propia
             for (l = 0; l < tam; l++) {
                 printf("|");
@@ -610,20 +611,20 @@ void resumen_partida(juego *j, jug_vect *jv) {
             }
 
             printf("       %2c ", 'A' + k);	// Letra para la fila derecha (OPONENTE)
-
+			
 			// Imprime tablero del oponente con colores según resultado
             for (l = 0; l < tam; l++) {
                 printf("|");
                 char c = jv->jug[i].tablero2[k][l];
                 if (c == '*') {
                 	color(159);				// Agua (azul-blanco)
-				}
+				}					
                 else if (c == 'X') {
                 	color(4);				// Tocado (rojo)
-				}
+				}			
                 else if (c == 'H') {
                 	color(6);				// Hundido (amarillo)
-				}
+				}		
                 else {
                 	color(7);				// Otro (blanco)
 				}
@@ -675,7 +676,7 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
                     scanf("%i",&op2);
                     fflush(stdin);
 				}while(op2 != 1 && op2 != 2 && op != 3);
-
+				
 				switch(op2){
 				    case 1:
 				        mostrar_config(jv, j);
@@ -726,7 +727,7 @@ int menu_configuracion(juego *j, bar_vect *b, jug_vect *jv) {
 				printf("Seleccione una opcion valida: ");
 				break;
 		}
-
+		
 		if (op != 6) {
 			printf("\nDeseas hacer algo mas? (S/N): ");
 			scanf("%c", &resp);

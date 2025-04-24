@@ -89,21 +89,21 @@ int tam_tab(juego *j, bar_vect *b, jug_vect *jv){
     char *nueva_fila = NULL;
     char **nuevo_tablero1 = NULL;
     char **nuevo_tablero2 = NULL;
-
-    clear();
-
+    
+    clear();    
+    
     //Sumatorio para saber el espacio máximo teórico que ocuparían los barcos ya establecidos
     for(i = 0; i< j->num_tipo_bar; i++) {
         max += ((9+((b->bar[i].tam_barco)-1)*3)*j->num_bar_tipo[i]);
     }
-
+    
     printf("Las dimensiones actuales del tablero son: %dx%d", j->tam_tablero, j->tam_tablero);
     printf("\nDeseas actualizar el tamano del tablero? (S/N): ");
     scanf("%c", &resp);
     fflush(stdin);
     confirmacion(&resp);
-
-
+    
+    
     if (resp == 'S' || resp == 's') {
         printf("\n\nIntroduce el nuevo tamano del tablero (mayor que 3): ");
         scanf("%d", &nuevo_tam);
@@ -115,44 +115,44 @@ int tam_tab(juego *j, bar_vect *b, jug_vect *jv){
         	scanf("%d", &nuevo_tam);
         	fflush(stdin);
     	}
-
+		
         // Para cada jugador
         for (i = 0; i < 2; i++) {
             // Reasignar memoria para tablero1
             nuevo_tablero1 = (char**)realloc(jv->jug[i].tablero1, nuevo_tam * sizeof(char*));
-
+            
             if (nuevo_tablero1 == NULL) {
                 printf("\nError al reasignar memoria para el tablero1");
                 return -1;
             }
-
+            
             jv->jug[i].tablero1 = nuevo_tablero1;
 
             for (fila = 0; fila < nuevo_tam; fila++) {
                 if (fila >= j->tam_tablero) {
                     // Nueva fila
                     jv->jug[i].tablero1[fila] = (char*)malloc(nuevo_tam * sizeof(char));
-
+                    
                     if (jv->jug[i].tablero1[fila] == NULL) {
                         printf("\nError al asignar nueva fila en tablero1");
                         return -1;
                     }
-
+                    
                     for (colum = 0; colum < nuevo_tam; colum++) {
                         jv->jug[i].tablero1[fila][colum] = '~';
                     }
-                }
+                } 
 				else {
                     // Fila existente, ampliar columnas
                     nueva_fila = (char*)realloc(jv->jug[i].tablero1[fila], nuevo_tam * sizeof(char));
-
+                    
                     if (nueva_fila == NULL) {
                         printf("\nError al reasignar fila en tablero1");
                         return -1;
                     }
-
+                    
                     jv->jug[i].tablero1[fila] = nueva_fila;
-
+                    
                     for (colum = j->tam_tablero; colum < nuevo_tam; colum++) {
                         jv->jug[i].tablero1[fila][colum] = '~';
                     }
@@ -161,39 +161,39 @@ int tam_tab(juego *j, bar_vect *b, jug_vect *jv){
 
             // Reasignar memoria para tablero2
             nuevo_tablero2 = (char**)realloc(jv->jug[i].tablero2, nuevo_tam * sizeof(char*));
-
+            
             if (nuevo_tablero2 == NULL) {
                 printf("\nError al reasignar memoria para el tablero2");
                 return -1;
             }
-
+            
             jv->jug[i].tablero2 = nuevo_tablero2;
 
             for (fila = 0; fila < nuevo_tam; fila++) {
                 if (fila >= j->tam_tablero) {
                     // Nueva fila
                     jv->jug[i].tablero2[fila] = (char*)malloc(nuevo_tam * sizeof(char));
-
+                    
                     if (jv->jug[i].tablero2[fila] == NULL) {
                         printf("\nError al asignar nueva fila en tablero2");
                         return -1;
                     }
-
+                    
                     for (colum = 0; colum < nuevo_tam; colum++) {
                         jv->jug[i].tablero2[fila][colum] = '~';
                     }
-                }
+                } 
 				else {
                     // Fila existente, ampliar columnas
                     nueva_fila = (char*)realloc(jv->jug[i].tablero2[fila], nuevo_tam * sizeof(char));
-
+                    
                     if (nueva_fila == NULL) {
                         printf("\nError al reasignar fila en tablero2");
                         return -1;
                     }
-
+                    
                     jv->jug[i].tablero2[fila] = nueva_fila;
-
+                    
                     for (colum = j->tam_tablero; colum < nuevo_tam; colum++) {
                         jv->jug[i].tablero2[fila][colum] = '~';
                     }
@@ -203,17 +203,17 @@ int tam_tab(juego *j, bar_vect *b, jug_vect *jv){
 
         // Actualizar tamaño del tablero
         j->tam_tablero = nuevo_tam;
-
+        
         // Guardar cambios
         if (guardar_datajuego(j, b, jv) == -1) {
             return -1;
         }
-    }
+    } 
 	else {
         printf("\nContinuando con el resto de la configuracion...\n");
         Sleep(1000);
     }
-
+    
     return 0;
 }
 
@@ -272,7 +272,7 @@ void crear_barco(bar_vect *barc, juego *jug, jug_vect *jv){
         ctrl2=0;
         //Aumento del vector dinamico y la cantidad de tipos de barco
         barc->num_tipo_bar++;
-        barc->bar=(barcos*)realloc(barc->bar,(barc->num_tipo_bar)*sizeof(barcos));
+        barc->bar=(barcos*)realloc(barc->bar,((barc->num_tipo_bar))*sizeof(barcos));
         printf("\nVamos a proceder con el ingreso de datos para este nuevo barco\n");
         printf("\n----\nNombre:\n----\n");
         //Se resta 1 a la cantidad de tipos porque i será nuestro acceso a la posición en el vector
@@ -287,7 +287,7 @@ void crear_barco(bar_vect *barc, juego *jug, jug_vect *jv){
            fflush(stdin);
            scanf("%c",&barc->bar[i].id_barco);
            for(j=0;j<i;j++){
-            if(barc->bar[i].id_barco==barc->bar[j].id_barco){
+            if(barc->bar[i].id_barco == barc->bar[j].id_barco){
                 ctrl1=1;
                 printf("El id establecido ya esta ocupado por otro barco, por favor, utilize otro caracter\n");
             }
